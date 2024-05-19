@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".MainActivity">
+    tools:context=".mmps.MMPS_Main">
 
     <ImageView
         android:id="@+id/imageView1"
@@ -31,7 +31,7 @@
             android:layout_weight="1"
             android:background="@drawable/tv_back_ffe08c"
             android:gravity="fill"
-            android:text="YJ MMS V0.0.0"
+            android:text="SMT 오삽방지 시스템 V0.0.0"
             android:textColor="#000000"
             android:textSize="15dp" />
 
