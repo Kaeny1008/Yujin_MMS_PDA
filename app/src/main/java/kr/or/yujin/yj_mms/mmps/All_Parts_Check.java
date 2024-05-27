@@ -49,6 +49,7 @@ import device.common.DecodeResult;
 import device.common.DecodeStateCallback;
 import device.common.ScanConst;
 import device.sdk.ScanManager;
+import kr.or.yujin.yj_mms.MainActivity;
 import kr.or.yujin.yj_mms.common.NoConvet;
 import kr.or.yujin.yj_mms.BuildConfig;
 import kr.or.yujin.yj_mms.R;
@@ -90,8 +91,8 @@ public class All_Parts_Check extends AppCompatActivity {
     private int selMakerNo = 0;
 
     //Server 접속주소
-    private static String server_ip = MMPS_Main.server_ip;
-    private static int server_port = MMPS_Main.server_port;
+    //private static String MainActivity.server_ip = MainActivity.server_ip;
+    //private static int MainActivity.server_port = MainActivity.server_port;
 
     private Vibrator vibrator;
 
@@ -113,7 +114,7 @@ public class All_Parts_Check extends AppCompatActivity {
         checkCode = "ACC" + cvtYY + cvtMM + cvtDD;
 
         GetData task = new GetData();
-        task.execute("http://" + server_ip + ":" + server_port + "/MMPS_V2/AllPartsCheck/codemaking.php", "codeFind"
+        task.execute("http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/MMPS_V2/AllPartsCheck/codemaking.php", "codeFind"
                 , getDate);
     }
 
@@ -132,7 +133,7 @@ public class All_Parts_Check extends AppCompatActivity {
         deleteText += " where CHECK_CODE = '" + checkCode + "';";
         //서버로 전송한다.
         GetData taskSave = new GetData();
-        taskSave.execute("http://" + server_ip + ":" + server_port + "/MMPS_V2/PartsChange_BLU/codeDelete.php"
+        taskSave.execute("http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/MMPS_V2/PartsChange_BLU/codeDelete.php"
                 , "codeDelete"
                 , deleteText);
 
@@ -177,8 +178,8 @@ public class All_Parts_Check extends AppCompatActivity {
 
         vibrator = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
 
-        server_ip = MMPS_Main.server_ip;
-        server_port = MMPS_Main.server_port;
+        //server_ip = MMPS_Main.server_ip;
+        //server_port = MMPS_Main.server_port;
         
         etWorker = (EditText) findViewById(R.id.etWorker);
         etMainDDCode = (EditText) findViewById(R.id.etMainDDCode);
@@ -227,7 +228,7 @@ public class All_Parts_Check extends AppCompatActivity {
         checkCode = "ACC" + cvtYY + cvtMM + cvtDD;
 
         GetData task = new GetData();
-        task.execute("http://" + server_ip + ":" + server_port + "/MMPS_V2/AllPartsCheck/codemaking.php", "codeFind"
+        task.execute("http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/MMPS_V2/AllPartsCheck/codemaking.php", "codeFind"
                 , getDate);
 
         etQty.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -287,7 +288,7 @@ public class All_Parts_Check extends AppCompatActivity {
                 deleteText += " where CHECK_CODE = '" + checkCode + "';";
                 //서버로 전송한다.
                 GetData taskSave = new GetData();
-                taskSave.execute("http://" + server_ip + ":" + server_port + "/MMPS_V2/AllPartsCheck/codeDelete.php"
+                taskSave.execute("http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/MMPS_V2/AllPartsCheck/codeDelete.php"
                         , "codeDelete"
                         , deleteText);
             }
@@ -301,7 +302,7 @@ public class All_Parts_Check extends AppCompatActivity {
                 barcodeHistory = "";
                 // 현재 피더의 정보를 다시 불러온다.
                 GetData task = new GetData();
-                task.execute("http://" + server_ip + ":" + server_port + "/MMPS_V2/AllPartsCheck/nowfeeder.php", "nextFeeder"
+                task.execute("http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/MMPS_V2/AllPartsCheck/nowfeeder.php", "nextFeeder"
                         , etMainDDCode.getText().toString()
                         , etMachineNo.getText().toString()
                         , etFeederNo.getText().toString());
@@ -567,14 +568,14 @@ public class All_Parts_Check extends AppCompatActivity {
                     checkCode += number;
                     // CheckCode를 임시로 저장한다.
                     GetData task = new GetData();
-                    task.execute("http://" + server_ip + ":" + server_port + "/MMPS_V2/AllPartsCheck/tempcodesave.php"
+                    task.execute("http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/MMPS_V2/AllPartsCheck/tempcodesave.php"
                             , "codeSave"
                             , checkCode);
                 } else if (header.equals("makingCode!")) {
                     checkCode += "001";
                     // CheckCode를 임시로 저장한다.
                     GetData task = new GetData();
-                    task.execute("http://" + server_ip + ":" + server_port + "/MMPS_V2/AllPartsCheck/tempcodesave.php", "codeSave"
+                    task.execute("http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/MMPS_V2/AllPartsCheck/tempcodesave.php", "codeSave"
                             , checkCode);
                 } else if (header.equals("codeSave")) {
                     JSONArray jsonArray = jsonObject.getJSONArray("codeSave");
@@ -603,7 +604,7 @@ public class All_Parts_Check extends AppCompatActivity {
 
                         // 다음 피더의 정보를 불러온다.
                         GetData task = new GetData();
-                        task.execute("http://" + server_ip + ":" + server_port + "/MMPS_V2/AllPartsCheck/nextfeeder.php", "nextFeeder"
+                        task.execute("http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/MMPS_V2/AllPartsCheck/nextfeeder.php", "nextFeeder"
                                 , etMainDDCode.getText().toString()
                                 , etMachineNo.getText().toString()
                                 , etFeederNo.getText().toString());
@@ -701,7 +702,7 @@ public class All_Parts_Check extends AppCompatActivity {
 
                     // 검사진행 결과를 완료로 업데이트 시킨다.
                     GetData task = new GetData();
-                    task.execute("http://" + server_ip + ":" + server_port + "/MMPS_V2/AllPartsCheck/checkcompleted.php", "checkCompleted", insertText);
+                    task.execute("http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/MMPS_V2/AllPartsCheck/checkcompleted.php", "checkCompleted", insertText);
                     Toast.makeText(All_Parts_Check.this, "완료 되었습니다.", Toast.LENGTH_SHORT).show();
                     tvStatus.setText("작업지시번호를 입력하여 주십시오.");
 
@@ -718,7 +719,7 @@ public class All_Parts_Check extends AppCompatActivity {
                     checkCode = "ACC" + cvtYY + cvtMM + cvtDD;
 
                     GetData task2 = new GetData();
-                    task2.execute("http://" + server_ip + ":" + server_port + "/MMPS_V2/AllPartsCheck/codemaking.php", "codeFind"
+                    task2.execute("http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/MMPS_V2/AllPartsCheck/codemaking.php", "codeFind"
                             , getDate);
 
                 } else if (header.equals("resultinsert")) {
@@ -842,7 +843,7 @@ public class All_Parts_Check extends AppCompatActivity {
                                 etMachineNo.setText(scanResultSplit[2]);  // 설비번호를 기록
                                 // 서버에서 체크 정보를 불러온다.
                                 GetData task = new GetData();
-                                task.execute("http://" + server_ip + ":" + server_port + "/MMPS_V2/AllPartsCheck/mainddcode.php", "MainDDCode"
+                                task.execute("http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/MMPS_V2/AllPartsCheck/mainddcode.php", "MainDDCode"
                                         , etMainDDCode.getText().toString()
                                         , etMachineNo.getText().toString());
                                 if (noFeeder.isChecked() == false){
@@ -862,7 +863,7 @@ public class All_Parts_Check extends AppCompatActivity {
                                 // TB_DEVICE_DATA, FEEDER_SN을 검사
                                 // DD_MAIN_NO 중 중복이 있는지 검사하면 된다.!!
                                 GetData task = new GetData();
-                                task.execute("http://" + server_ip + ":" + server_port + "/MMPS_V2/AllPartsCheck/feederlist.php", "feederList"
+                                task.execute("http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/MMPS_V2/AllPartsCheck/feederlist.php", "feederList"
                                         , etMainDDCode.getText().toString()
                                         , etMachineNo.getText().toString());
                             } else {
@@ -896,7 +897,7 @@ public class All_Parts_Check extends AppCompatActivity {
                             String replaceBarcode = StringUtil.barcodeChange(mDecodeResult.toString());
 
                             GetData php_barcodeSplit = new GetData();
-                            php_barcodeSplit.execute("http://" + server_ip + ":" + server_port + "/MMPS_V2/BarcodeSplit/barcodesplit.php",
+                            php_barcodeSplit.execute("http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/MMPS_V2/BarcodeSplit/barcodesplit.php",
                                     "BarcodeSplit",
                                     spnMaker.getSelectedItem().toString(),
                                     replaceBarcode);
@@ -1100,7 +1101,7 @@ public class All_Parts_Check extends AppCompatActivity {
 
                 //서버로 전송한다.
                 GetData taskSave = new GetData();
-                taskSave.execute("http://" + server_ip + ":" + server_port + "/MMPS_V2/AllPartsCheck/scan_error_insert.php"
+                taskSave.execute("http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/MMPS_V2/AllPartsCheck/scan_error_insert.php"
                         , "scanErrorInsert"
                         , insertText);
                  */
@@ -1134,7 +1135,7 @@ public class All_Parts_Check extends AppCompatActivity {
         Log.d(TAG, "현재 선택된 제조사 : " + spnMaker.getSelectedItem().toString());
         /*
         GetData php_barcodeSplit = new GetData();
-        php_barcodeSplit.execute("http://" + server_ip + ":" + server_port + "/MMPS_V2/BarcodeSplit/barcodesplit.php",
+        php_barcodeSplit.execute("http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/MMPS_V2/BarcodeSplit/barcodesplit.php",
                 "BarcodeSplit",
                 spnMaker.getSelectedItem().toString(),
                 mDecodeResult.toString().replace("&", "//"));
@@ -1144,6 +1145,7 @@ public class All_Parts_Check extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
         if (requestCode == 0) { // 알람 결과가 온 경우
             ngReasonString = data.getStringExtra("misReason");
@@ -1287,7 +1289,7 @@ public class All_Parts_Check extends AppCompatActivity {
 
         //서버로 전송한다.
         GetData taskSave = new GetData();
-        taskSave.execute("http://" + server_ip + ":" + server_port + "/MMPS_V2/AllPartsCheck/check_insert.php"
+        taskSave.execute("http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/MMPS_V2/AllPartsCheck/check_insert.php"
                 , "firstInsert"
                 , insertText + firstChangeText);
         firstCheck = false;
@@ -1312,7 +1314,7 @@ public class All_Parts_Check extends AppCompatActivity {
                         Log.d(TAG, "전송 SQL : " + insertText);
                         // 서버로 전송한다.
                         GetData taskFeederInit = new GetData();
-                        taskFeederInit.execute("http://" + server_ip + ":" + server_port + "/MMPS_V2/AllPartsCheck/feederinit.php", "feederInit"
+                        taskFeederInit.execute("http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/MMPS_V2/AllPartsCheck/feederinit.php", "feederInit"
                                 , insertText);
                     }
                 });
@@ -1406,7 +1408,7 @@ public class All_Parts_Check extends AppCompatActivity {
 
     private void verCheck(){
         GetData task_VerLoad = new GetData();
-        task_VerLoad.execute( "http://" + server_ip + ":" + server_port + "/MMPS_V2/app_ver_new.php", "ver");
+        task_VerLoad.execute( "http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/yj_mms_ver.php", "ver");
     }
 
     private void appVerAlarm() {
@@ -1419,7 +1421,8 @@ public class All_Parts_Check extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         //확인 눌렀을때의 이벤트 처리
                         dialog.dismiss();
-                        android.os.Process.killProcess(android.os.Process.myPid());
+                        //android.os.Process.killProcess(android.os.Process.myPid());
+                        finish();
                     }
                 });
         builder.show();
@@ -1464,7 +1467,7 @@ public class All_Parts_Check extends AppCompatActivity {
         deleteText += " where check_code = '" + checkCode + "';";
         //서버로 전송한다.
         GetData taskSave = new GetData();
-        taskSave.execute("http://" + server_ip + ":" + server_port + "/MMPS_V2/AllPartsCheck/codeDelete.php"
+        taskSave.execute("http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/MMPS_V2/AllPartsCheck/codeDelete.php"
                 , "codeDelete"
                 , deleteText);
         super.onDestroy();

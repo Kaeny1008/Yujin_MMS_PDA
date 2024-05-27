@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="kr.or.yujin.yj_mms" >
+    package="kr.or.yujin.yj_mms">
 
     <uses-feature
         android:name="android.hardware.camera"
@@ -24,10 +24,16 @@
         android:roundIcon="@mipmap/ic_launcher_mmps_round"
         android:supportsRtl="true"
         android:theme="@style/NoTitle"
-        android:usesCleartextTraffic="true" >
+        android:usesCleartextTraffic="true">
+        <activity
+            android:name=".mmng.Stock_Survey"
+            android:exported="false" />
+        <activity
+            android:name=".mmng.MMNG_Main"
+            android:exported="false" />
         <activity
             android:name=".MainActivity"
-            android:windowSoftInputMode="stateHidden|adjustPan" >
+            android:windowSoftInputMode="stateHidden|adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -35,30 +41,20 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".mmps.Feeder_Change" />
-        <activity
-            android:name=".mmps.Device_Data" />
-        <activity
-            android:name=".mmps.Parts_Change" />
-        <activity
-            android:name=".mmps.Mis_Check" />
-        <activity
-            android:name=".mmps.All_Parts_Check" />
-        <activity
-            android:name=".mmps.MMPS_Main" />
-        <activity
-            android:name=".mmps.App_Setting" />
-        <activity
-            android:name=".mmps.scanner_1d" />
-        <activity
-            android:name=".mmps.scanner_2d" />
-        <activity
-            android:name=".mmps.scanner_all" />
-        <!-- uses-library를 실제 기기사용시 주석 제거해야함. -->
+        <activity android:name=".mmps.Feeder_Change" />
+        <activity android:name=".mmps.Device_Data" />
+        <activity android:name=".mmps.Parts_Change" />
+        <activity android:name=".mmps.Mis_Check" />
+        <activity android:name=".mmps.All_Parts_Check" />
+        <activity android:name=".mmps.MMPS_Main" />
+        <activity android:name=".App_Setting" />
+        <activity android:name=".mmps.scanner_1d" />
+        <activity android:name=".mmps.scanner_2d" />
+        <activity android:name=".mmps.scanner_all" /> <!-- uses-library를 실제 기기사용시 주석 제거해야함. -->
         <uses-library
             android:name="device.sdk"
             android:required="true" />
+
         <service
             android:name=".common.ForecdTerminationService"
             android:stopWithTask="false" />

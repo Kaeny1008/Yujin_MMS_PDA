@@ -5,6 +5,7 @@ import device.common.DecodeResult;
 import device.common.DecodeStateCallback;
 import device.common.ScanConst;
 import device.sdk.ScanManager;
+import kr.or.yujin.yj_mms.MainActivity;
 import kr.or.yujin.yj_mms.R;
 
 import android.app.ActivityManager;
@@ -47,8 +48,8 @@ public class Feeder_Change extends AppCompatActivity {
     private Button btnChange;
 
     //Server 접속주소
-    private static String server_ip = MMPS_Main.server_ip;
-    private static int server_port = MMPS_Main.server_port;
+    //private static String server_ip = MMPS_Main.server_ip;
+    //private static int server_port = MMPS_Main.server_port;
 
     // Scanner Setting
     private static final String TAG = "Feeder Change";
@@ -70,8 +71,8 @@ public class Feeder_Change extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.mmps_feeder_change);
 
-        server_ip = MMPS_Main.server_ip;
-        server_port = MMPS_Main.server_port;
+        //server_ip = MMPS_Main.server_ip;
+        //server_port = MMPS_Main.server_port;
 
         etWorker = (EditText) findViewById(R.id.etWorker);
         etMainDDCode = (EditText) findViewById(R.id.etMainDDCode);
@@ -140,7 +141,7 @@ public class Feeder_Change extends AppCompatActivity {
                     //서버로 전송한다.
                     Log.d(TAG, "Feeder Change SQL : " + insertText);
                     getData taskSave = new getData();
-                    taskSave.execute("http://" + server_ip + ":" + server_port + "/MMPS_V2/FeederChange/FeederChange.php"
+                    taskSave.execute("http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/MMPS_V2/FeederChange/FeederChange.php"
                             , "feederChange"
                             , insertText);
                 } else {

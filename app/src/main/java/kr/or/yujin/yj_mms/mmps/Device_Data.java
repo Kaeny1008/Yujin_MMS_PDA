@@ -44,6 +44,7 @@ import device.common.DecodeResult;
 import device.common.DecodeStateCallback;
 import device.common.ScanConst;
 import device.sdk.ScanManager;
+import kr.or.yujin.yj_mms.MainActivity;
 import kr.or.yujin.yj_mms.common.StringUtil;
 import kr.or.yujin.yj_mms.BuildConfig;
 import kr.or.yujin.yj_mms.R;
@@ -78,8 +79,8 @@ public class Device_Data extends AppCompatActivity {
 
 
     //Server 접속주소
-    private static String server_ip = MMPS_Main.server_ip;
-    private static int server_port = MMPS_Main.server_port;
+    //private static String MainActivity.server_ip = MMPS_Main.server_ip;
+    //private static int MainActivity.server_port = MMPS_Main.server_port;
 
     private Spinner spnCustomer, spnModel, spnFactory, spnWorkLine, spnWorkSide, spnMaker;
 
@@ -132,8 +133,8 @@ public class Device_Data extends AppCompatActivity {
             }
         }
 
-        server_ip = MMPS_Main.server_ip;
-        server_port = MMPS_Main.server_port;
+        //server_ip = MMPS_Main.server_ip;
+        //server_port = MMPS_Main.server_port;
 
         etMachineNo = (EditText) findViewById(R.id.etMachineNo);
         etFeederNo = (EditText) findViewById(R.id.etFeederNo);
@@ -186,12 +187,12 @@ public class Device_Data extends AppCompatActivity {
         spnMaker.setAdapter(makerNameListADT);
 
         getData taskCustomerFind = new getData();
-        taskCustomerFind.execute("http://" + server_ip + ":" + server_port + "/MMPS_V2/DeviceData/customerlist.php", "customer Find");
+        taskCustomerFind.execute("http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/MMPS_V2/DeviceData/customerlist.php", "customer Find");
 
         spnModel.setEnabled(false);
 
         getData taskFactoryFind = new getData();
-        taskFactoryFind.execute("http://" + server_ip + ":" + server_port + "/MMPS_V2/DeviceData/factorylist.php", "factory Find");
+        taskFactoryFind.execute("http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/MMPS_V2/DeviceData/factorylist.php", "factory Find");
 
         spnWorkLine.setEnabled(false);
 
@@ -201,7 +202,7 @@ public class Device_Data extends AppCompatActivity {
 
         // 현재 프로세스 변경으로 메이커 리스트를 먼저 불러 올 필요가 없다.
         //getData taskMakerFind = new getData();
-        //taskMakerFind.execute("http://" + server_ip + ":" + server_port + "/MMPS_V2/DeviceData/makerlist.php", "maker Find");
+        //taskMakerFind.execute("http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/MMPS_V2/DeviceData/makerlist.php", "maker Find");
 
         spnCustomer.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -212,7 +213,7 @@ public class Device_Data extends AppCompatActivity {
                     //Toast.makeText(DeviceDataActivity.this,"선택 된 고객사 코드 : " + customerCodeList.get(position),Toast.LENGTH_SHORT).show();
                     //Log.d(activityTag, "선택 된 고객사 코드 : " + customerCodeList.get(position));
                     getData taskModelFind = new getData();
-                    taskModelFind.execute("http://" + server_ip + ":" + server_port + "/MMPS_V2/DeviceData/modellist.php", "model Find", customerCodeList.get(position));
+                    taskModelFind.execute("http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/MMPS_V2/DeviceData/modellist.php", "model Find", customerCodeList.get(position));
                 }
             }
 
@@ -247,7 +248,7 @@ public class Device_Data extends AppCompatActivity {
                 } else {
                     //Log.d(activityTag, "선택 된 공장 코드 : " + factoryCodeList.get(position));
                     getData taskLineFind = new getData();
-                    taskLineFind.execute("http://" + server_ip + ":" + server_port + "/MMPS_V2/DeviceData/worklinelist.php", "line Find", factoryCodeList.get(position));
+                    taskLineFind.execute("http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/MMPS_V2/DeviceData/worklinelist.php", "line Find", factoryCodeList.get(position));
                 }
             }
 
@@ -264,7 +265,7 @@ public class Device_Data extends AppCompatActivity {
 
                 /*
                 getData taskLineFind = new getData();
-                taskLineFind.execute("http://" + server_ip + ":" + server_port + "/MMPS_V2/BarcodeSplit/barcodesplit.php",
+                taskLineFind.execute("http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/MMPS_V2/BarcodeSplit/barcodesplit.php",
                         "BarcodeSplit",
                         "POCONS",
                         "PTC4944HEX2038V0314K001700");
@@ -324,13 +325,13 @@ public class Device_Data extends AppCompatActivity {
 
                 /*
                 getData taskMakerFind = new getData();
-                taskMakerFind.execute("http://" + server_ip + ":" + server_port + "/MMPS_V2/DeviceData/makerlist.php"
+                taskMakerFind.execute("http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/MMPS_V2/DeviceData/makerlist.php"
                         , "maker Find"
                 );
                  */
 
                 getData taskLineFind = new getData();
-                taskLineFind.execute("http://" + server_ip + ":" + server_port + "/MMPS_V2/DeviceData/feedercheck.php"
+                taskLineFind.execute("http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/MMPS_V2/DeviceData/feedercheck.php"
                         , "feederCheck"
                         , selModelCode
                         , spnFactory.getSelectedItem().toString()
@@ -430,7 +431,7 @@ public class Device_Data extends AppCompatActivity {
                     //서버로 전송한다.
                     Log.d(TAG, "Insert Text : " + insertText);
                     getData taskSave = new getData();
-                    taskSave.execute("http://" + server_ip + ":" + server_port + "/MMPS_V2/DeviceData/ddinsert.php"
+                    taskSave.execute("http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/MMPS_V2/DeviceData/ddinsert.php"
                             , "ddInsert"
                             , insertText);
                 } else {
@@ -456,7 +457,7 @@ public class Device_Data extends AppCompatActivity {
                         // 21-01-22 박시현
                         String replaceBarcode = StringUtil.barcodeChange(mDecodeResult.toString());
                         getData php_barcodeSplit = new getData();
-                        php_barcodeSplit.execute("http://" + server_ip + ":" + server_port + "/MMPS_V2/BarcodeSplit/barcodesplit.php",
+                        php_barcodeSplit.execute("http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/MMPS_V2/BarcodeSplit/barcodesplit.php",
                                 "BarcodeSplit",
                                 spnMaker.getSelectedItem().toString(),
                                 replaceBarcode);
@@ -714,7 +715,7 @@ public class Device_Data extends AppCompatActivity {
                     Toast.makeText(Device_Data.this, "등록된 정보가 없습니다. \n 신규 등록으로 진행됩니다.", Toast.LENGTH_SHORT).show();
 
                     getData taskLineFind = new getData(); // DD_MAIN_CODE가 있는지 확인
-                    taskLineFind.execute("http://" + server_ip + ":" + server_port + "/MMPS_V2/DeviceData/ddcodecheck.php"
+                    taskLineFind.execute("http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/MMPS_V2/DeviceData/ddcodecheck.php"
                             , "ddCodeCheck"
                             , selModelCode
                             , spnFactory.getSelectedItem().toString()
@@ -867,7 +868,7 @@ public class Device_Data extends AppCompatActivity {
 
     private void verCheck(){
         getData task_VerLoad = new getData();
-        task_VerLoad.execute( "http://" + server_ip + ":" + server_port + "/MMPS_V2/app_ver_new.php", "ver");
+        task_VerLoad.execute( "http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/yj_mms_ver.php", "ver");
     }
 
     private void appVerAlarm() {
@@ -880,7 +881,8 @@ public class Device_Data extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         //확인 눌렀을때의 이벤트 처리
                         dialog.dismiss();
-                        android.os.Process.killProcess(android.os.Process.myPid());
+                        //android.os.Process.killProcess(android.os.Process.myPid());
+                        finish();
                     }
                 });
         builder.show();

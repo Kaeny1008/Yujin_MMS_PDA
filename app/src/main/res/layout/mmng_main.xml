@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".MainActivity">
+    tools:context=".mmng.MMNG_Main">
 
     <ImageView
         android:id="@+id/imageView1"
@@ -31,7 +31,7 @@
             android:layout_weight="1"
             android:background="@drawable/tv_back_ffe08c"
             android:gravity="fill"
-            android:text="YJ MMS V0.0.0"
+            android:text="자재관리 시스템 V0.0.0"
             android:textColor="#000000"
             android:textSize="15dp" />
 
@@ -51,13 +51,13 @@
             android:orientation="vertical">
 
             <ImageButton
-                android:id="@+id/btnMaterial"
+                android:id="@+id/btnStockSurvey"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:padding="0dp"
                 android:scaleType="fitCenter"
-                android:src="@drawable/btn_material_button"
+                android:src="@drawable/btn_stock_survey_button"
                 android:text="DeviceData"
                 android:textSize="50sp" />
 
@@ -66,15 +66,16 @@
                 android:layout_height="10dp" />
 
             <ImageButton
-                android:id="@+id/btnMMPS"
+                android:id="@+id/btnAllPartsCheck"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:padding="0dp"
                 android:scaleType="fitCenter"
-                android:src="@drawable/btn_mmps_button"
+                android:src="@drawable/btn_allpartscheck"
                 android:text="AllPartsCheck"
-                android:textSize="50sp"/>
+                android:textSize="50sp"
+                android:visibility="invisible"/>
 
             <Space
                 android:layout_width="10dp"
@@ -107,21 +108,6 @@
                 android:text="FeederChange"
                 android:textSize="50sp"
                 android:visibility="invisible"/>
-
-            <Space
-                android:layout_width="match_parent"
-                android:layout_height="10dp" />
-
-            <ImageButton
-                android:id="@+id/btnSetting"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:padding="0dp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/btn_setting_button"
-                android:text="AppSetting"
-                android:textSize="50sp" />
 
         </LinearLayout>
 

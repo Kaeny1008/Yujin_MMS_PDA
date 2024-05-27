@@ -1,4 +1,4 @@
-package kr.or.yujin.yj_mms.mmps;
+package kr.or.yujin.yj_mms;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
@@ -10,6 +10,8 @@ import android.widget.Spinner;
 
 import androidx.appcompat.app.AppCompatActivity;
 import kr.or.yujin.yj_mms.R;
+import kr.or.yujin.yj_mms.mmps.All_Parts_Check;
+import kr.or.yujin.yj_mms.mmps.MMPS_Main;
 
 public class App_Setting extends AppCompatActivity{
 
@@ -45,9 +47,9 @@ public class App_Setting extends AppCompatActivity{
                 SharedPreferences setting = getSharedPreferences("setting", Activity.MODE_PRIVATE);
                 SharedPreferences.Editor appsetting = setting.edit();
                 appsetting.putString("serverIP", serverIP.getText().toString());
-                MMPS_Main.server_ip = serverIP.getText().toString();
+                MainActivity.server_ip = serverIP.getText().toString();
                 appsetting.putString("serverPort", serverPort.getText().toString());
-                MMPS_Main.server_port = Integer.parseInt(serverPort.getText().toString());
+                MainActivity.server_port = Integer.parseInt(serverPort.getText().toString());
                 String barType = barcodeType.getSelectedItem().toString();
                 MMPS_Main.barcodeType = barcodeType.getSelectedItem().toString();
                 appsetting.putString("barcodeType", barType);
@@ -57,5 +59,12 @@ public class App_Setting extends AppCompatActivity{
                 finish();
             }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        //엑티비티가 종료되었다는걸 메인엑티비티에게 전달
+        MainActivity.settingForm = false;
+        super.onDestroy();
     }
 }

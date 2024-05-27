@@ -47,6 +47,7 @@ import device.common.DecodeResult;
 import device.common.DecodeStateCallback;
 import device.common.ScanConst;
 import device.sdk.ScanManager;
+import kr.or.yujin.yj_mms.MainActivity;
 import kr.or.yujin.yj_mms.common.NoConvet;
 import kr.or.yujin.yj_mms.BuildConfig;
 import kr.or.yujin.yj_mms.R;
@@ -67,8 +68,8 @@ public class Parts_Change extends AppCompatActivity {
     private String orgPartNo, factoryName, lineName, workSide, modelName, customerName, machineNo, feederNo;
 
     //Server 접속주소
-    private static String server_ip = MMPS_Main.server_ip;
-    private static int server_port = MMPS_Main.server_port;
+    //private static String MainActivity.server_ip = MMPS_Main.server_ip;
+    //private static int MainActivity.server_port = MMPS_Main.server_port;
 
     // Scanner Setting
     private static final String TAG = "Parts Change_New";
@@ -94,8 +95,8 @@ public class Parts_Change extends AppCompatActivity {
 
         vibrator = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
 
-        server_ip = MMPS_Main.server_ip;
-        server_port = MMPS_Main.server_port;
+        //server_ip = MMPS_Main.server_ip;
+        //server_port = MMPS_Main.server_port;
 
         etInit();
         tvInit();
@@ -421,17 +422,17 @@ public class Parts_Change extends AppCompatActivity {
         //서버로 전송한다.
         getData taskSave = new getData();
         if(result.equals("OK")){
-            taskSave.execute("http://" + server_ip + ":" + server_port + "/MMPS_V2/PartsChange/resultsave.php"
+            taskSave.execute("http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/MMPS_V2/PartsChange/resultsave.php"
                     , "resultSave"
                     , insertText);
             return;
         } else if(result.equals("NG1")){
-            taskSave.execute("http://" + server_ip + ":" + server_port + "/MMPS_V2/PartsChange/resultsave1.php"
+            taskSave.execute("http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/MMPS_V2/PartsChange/resultsave1.php"
                     , "resultSave"
                     , insertText);
             return;
         } else if(result.equals("NG2")){
-            taskSave.execute("http://" + server_ip + ":" + server_port + "/MMPS_V2/PartsChange/resultsave2.php"
+            taskSave.execute("http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/MMPS_V2/PartsChange/resultsave2.php"
                     , "resultSave"
                     , insertText);
             return;
@@ -470,7 +471,7 @@ public class Parts_Change extends AppCompatActivity {
 
                                 //선택된 피더의 정보를 불러온다.
                                 getData task = new getData();
-                                task.execute("http://" + server_ip + ":" + server_port + "/MMPS_V2/PartsChange/feederinfo.php"
+                                task.execute("http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/MMPS_V2/PartsChange/feederinfo.php"
                                         , "feederInfo"
                                         , etMainDDCode.getText().toString()
                                         , etFeederSN.getText().toString());
@@ -544,12 +545,12 @@ public class Parts_Change extends AppCompatActivity {
                             getData php_barcodeSplit = new getData();
                             //아이디스 일경우 해독과 비해독이 존재하므로 나눠줘야 한다.
                             if (selPartMaker.contains("아이디스") && etAftPartNo.getText().toString().length() > 0 && etAftLotNo.getText().length() > 0) {
-                                php_barcodeSplit.execute("http://" + server_ip + ":" + server_port + "/MMPS_V2/BarcodeSplit/barcodesplit.php",
+                                php_barcodeSplit.execute("http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/MMPS_V2/BarcodeSplit/barcodesplit.php",
                                         "BarcodeSplit",
                                         "아이디스2",
                                         replaceBarcode);
                             } else {
-                                php_barcodeSplit.execute("http://" + server_ip + ":" + server_port + "/MMPS_V2/BarcodeSplit/barcodesplit.php",
+                                php_barcodeSplit.execute("http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/MMPS_V2/BarcodeSplit/barcodesplit.php",
                                         "BarcodeSplit",
                                         selPartMaker,
                                         replaceBarcode);
@@ -628,6 +629,7 @@ public class Parts_Change extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         //IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 0) { // 알람 결과가 온 경우
             //ngReasonString = data.getStringExtra("misReason");
             //ngCheckID = data.getStringExtra("checkID");
@@ -644,7 +646,7 @@ public class Parts_Change extends AppCompatActivity {
         deleteText += " where check_code = '" + checkCode + "';";
         //서버로 전송한다.
         getData taskSave = new getData();
-        taskSave.execute("http://" + server_ip + ":" + server_port + "/MMPS_V2/PartsChange/codeDelete.php"
+        taskSave.execute("http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/MMPS_V2/PartsChange/codeDelete.php"
                 , "codeDelete"
                 , deleteText);
     }
@@ -662,7 +664,7 @@ public class Parts_Change extends AppCompatActivity {
         checkCode = "CCC" + cvtYY + cvtMM + cvtDD; // 임시 체크코드 저장
 
         getData task = new getData();
-        task.execute("http://" + server_ip + ":" + server_port + "/MMPS_V2/PartsChange/codemaking.php", "codeFind"
+        task.execute("http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/MMPS_V2/PartsChange/codemaking.php", "codeFind"
                 , getDate);
     }
 
@@ -816,13 +818,13 @@ public class Parts_Change extends AppCompatActivity {
 
                     // 체크 코드를 임시로 저장한다.
                     getData task = new getData();
-                    task.execute("http://" + server_ip + ":" + server_port + "/MMPS_V2/PartsChange/tempcodesave.php", "codeSave"
+                    task.execute("http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/MMPS_V2/PartsChange/tempcodesave.php", "codeSave"
                             , checkCode);
                 } else if (header.equals("makingCode!")) {
                     checkCode += "0001";
                     // 체크 코드를 임시로 저장한다.
                     getData task = new getData();
-                    task.execute("http://" + server_ip + ":" + server_port + "/MMPS_V2/PartsChange/tempcodesave.php", "codeSave"
+                    task.execute("http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/MMPS_V2/PartsChange/tempcodesave.php", "codeSave"
                             , checkCode);
                 } else if (header.equals("codeSave")) {
                     JSONArray jsonArray = jsonObject.getJSONArray("codeSave");
@@ -1168,7 +1170,7 @@ public class Parts_Change extends AppCompatActivity {
 
     private void verCheck(){
         getData task_VerLoad = new getData();
-        task_VerLoad.execute( "http://" + server_ip + ":" + server_port + "/MMPS_V2/app_ver_new.php", "ver");
+        task_VerLoad.execute( "http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/yj_mms_ver.php", "ver");
     }
 
     private void appVerAlarm() {
@@ -1181,7 +1183,8 @@ public class Parts_Change extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         //확인 눌렀을때의 이벤트 처리
                         dialog.dismiss();
-                        android.os.Process.killProcess(android.os.Process.myPid());
+                        //android.os.Process.killProcess(android.os.Process.myPid());
+                        finish();
                     }
                 });
         builder.show();

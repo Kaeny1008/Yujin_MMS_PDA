@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:gravity="center"
-    tools:context=".mmps.App_Setting">
+    tools:context=".App_Setting">
 
     <ImageView
         android:id="@+id/imageView"

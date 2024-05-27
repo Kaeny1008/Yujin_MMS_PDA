@@ -1,14 +1,7 @@
-package kr.or.yujin.yj_mms.mmps;
+package kr.or.yujin.yj_mms.mmng;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import kr.or.yujin.yj_mms.App_Setting;
-import kr.or.yujin.yj_mms.MainActivity;
-import kr.or.yujin.yj_mms.common.ForecdTerminationService;
-import kr.or.yujin.yj_mms.R;
-
-import android.Manifest;
-import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -16,10 +9,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -40,60 +30,31 @@ import java.net.URL;
 import java.util.List;
 
 import kr.or.yujin.yj_mms.BuildConfig;
+import kr.or.yujin.yj_mms.MainActivity;
+import kr.or.yujin.yj_mms.R;
+import kr.or.yujin.yj_mms.mmps.All_Parts_Check;
+import kr.or.yujin.yj_mms.mmps.MMPS_Main;
 
-public class MMPS_Main extends AppCompatActivity {
+public class MMNG_Main extends AppCompatActivity {
 
-    public static String barcodeType; // ALL Type, 1D, 2D
+    private String activityTag = "자재관리 Main Activity";
 
-    private ImageButton btnAllPartsCheck, btnPartsChange, btnDeviceData, btnFeederChange;
+    private ImageButton btnStockSurvey;
     private TextView loginStatus;
-
-    private String activityTag = "오삽방지 시스템 Main Activity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.mmps_main);
-
-        //verCheck();
-
-        btnAllPartsCheck = (ImageButton) findViewById(R.id.btnAllPartsCheck);
-        btnPartsChange = (ImageButton) findViewById(R.id.btnPartsChange);
-        btnDeviceData = (ImageButton) findViewById(R.id.btnDeviceData);
-        btnFeederChange = (ImageButton) findViewById(R.id.btnFeederChange);
+        setContentView(R.layout.mmng_main);
 
         loginStatus = (TextView) findViewById(R.id.loginStatus);
-        loginStatus.setText("SMT 오삽방지 시스템 V" + BuildConfig.VERSION_NAME);
+        loginStatus.setText("자재관리 시스템 V" + BuildConfig.VERSION_NAME);
 
-        btnAllPartsCheck.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Intent intent = new Intent(MMPS_Main.this, All_Parts_Check.class);
-                startActivity(intent);//액티비티 띄우기
-            }
-        });
+        btnStockSurvey = (ImageButton) findViewById(R.id.btnStockSurvey);
 
-        btnPartsChange.setOnClickListener(new View.OnClickListener() {
+        btnStockSurvey.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                // Intent intent = new Intent(MainActivity.this, PartsChangeActivity_Select.class);
-                Intent intent = new Intent(MMPS_Main.this, Parts_Change.class);
-                startActivity(intent);//액티비티 띄우기
-            }
-        });
-
-        btnDeviceData.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Toast.makeText(MMPS_Main.this
-                        , "프로세스 변경으로 유사(대치) \n자재 등록을 할 수 없습니다."
-                        , Toast.LENGTH_SHORT).show();
-                return;
-                //Intent intent = new Intent(MainActivity.this, DeviceDataActivity.class);
-                //startActivity(intent);//액티비티 띄우기
-            }
-        });
-
-        btnFeederChange.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Intent intent = new Intent(MMPS_Main.this, Feeder_Change.class);
+                Intent intent = new Intent(MMNG_Main.this, Stock_Survey.class);
                 startActivity(intent);//액티비티 띄우기
             }
         });
@@ -118,7 +79,7 @@ public class MMPS_Main extends AppCompatActivity {
             String ActivityName = componentName.getShortClassName().substring(1);
 
             if (ActivityName.equals("mmps.MMPS_Main"))
-                progressDialog = ProgressDialog.show(MMPS_Main.this,
+                progressDialog = ProgressDialog.show(MMNG_Main.this,
                         "Connecting to server....\nPlease wait.", null, true, true);
         }
 
@@ -182,7 +143,7 @@ public class MMPS_Main extends AppCompatActivity {
                 showResult(result);
             } else {
                 Log.d(activityTag, "서버 접속 Error - " + errorString);
-                Toast.makeText(MMPS_Main.this, "서버에 접속 할 수 없습니다.\n상세 내용은 로그를 참조 하십시오.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MMNG_Main.this, "서버에 접속 할 수 없습니다.\n상세 내용은 로그를 참조 하십시오.", Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -198,11 +159,11 @@ public class MMPS_Main extends AppCompatActivity {
                 if (header.equals("CheckVer")) {
                     JSONArray jsonArray = jsonObject.getJSONArray("CheckVer");
                     JSONObject item = jsonArray.getJSONObject(0);
-                    if (!item.getString("Result").equals("Ver:"+BuildConfig.VERSION_NAME)){
+                    if (!item.getString("Result").equals("Ver:"+ BuildConfig.VERSION_NAME)){
                         appVerAlarm();
                     }
                 } else {
-                    Toast.makeText(MMPS_Main.this, mJsonString, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MMNG_Main.this, mJsonString, Toast.LENGTH_SHORT).show();
                 }
             } catch (JSONException e) {
                 Log.d("MMPS Main", "showResult Error : ", e);
@@ -230,7 +191,7 @@ public class MMPS_Main extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         //엑티비티가 종료되었다는걸 메인엑티비티에게 전달
-        MainActivity.mmpsForm = false;
+        MainActivity.materialForm = false;
         super.onDestroy();
     }
 

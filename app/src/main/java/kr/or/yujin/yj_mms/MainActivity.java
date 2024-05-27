@@ -11,12 +11,16 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -31,7 +35,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
 
+import device.common.ScanConst;
 import kr.or.yujin.yj_mms.common.ForecdTerminationService;
+import kr.or.yujin.yj_mms.mmng.MMNG_Main;
 import kr.or.yujin.yj_mms.mmps.MMPS_Main;
 
 public class MainActivity extends AppCompatActivity {
@@ -39,6 +45,11 @@ public class MainActivity extends AppCompatActivity {
     private String activityTag = "Main Activity Log";
     public static String server_ip;
     public static int server_port; //실제 SQL포트가 아닌 php포트
+
+    private ImageButton btnSetting, btnMaterial, btnMMPS;
+    public static Boolean materialForm, settingForm, mmpsForm;
+
+    private TextView loginStatus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,12 +59,58 @@ public class MainActivity extends AppCompatActivity {
         startService(new Intent(this, ForecdTerminationService.class)); //강제종료방지
         appSettingLoad(); //기본 셋팅값을 불러온다.
         checkPermission(); //카메라 사용권한을 확인한다.
-        verCheck();
+        //verCheck();
+
+        loginStatus = (TextView) findViewById(R.id.loginStatus);
+        loginStatus.setText("YJ MMS V" + BuildConfig.VERSION_NAME);
+
+        btnSetting = (ImageButton) findViewById(R.id.btnSetting);
+        btnMaterial = (ImageButton) findViewById(R.id.btnMaterial);
+        btnMMPS = (ImageButton) findViewById(R.id.btnMMPS);
+        materialForm = false;
+        settingForm = false;
+        mmpsForm = false;
+
+        btnSetting.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                if (settingForm == false){
+                    settingForm = true;
+                    Intent intent = new Intent(MainActivity.this, App_Setting.class);
+                    startActivity(intent);//액티비티 띄우기
+                } else {
+                    Log.d(activityTag, "셋팅 페이지가 열려있다.");
+                }
+            }
+        });
+
+        btnMaterial.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                if (materialForm == false){
+                    materialForm = true;
+                    Intent intent = new Intent(MainActivity.this, MMNG_Main.class);
+                    startActivity(intent);//액티비티 띄우기
+                } else {
+                    Log.d(activityTag, "자재관리 페이지가 열려있다.");
+                }
+            }
+        });
+
+        btnMMPS.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                if (mmpsForm == false){
+                    mmpsForm = true;
+                    Intent intent = new Intent(MainActivity.this, MMPS_Main.class);
+                    startActivity(intent);//액티비티 띄우기
+                } else {
+                    Log.d(activityTag, "오삽방지시스템 페이지가 열려있다.");
+                }
+            }
+        });
     }
 
     private void verCheck(){
         getData task_VerLoad = new getData();
-        task_VerLoad.execute( "http://" + server_ip + ":" + server_port + "/MMPS_V2/app_ver_new.php", "ver");
+        task_VerLoad.execute( "http://" + server_ip + ":" + server_port + "/yj_mms_ver.php", "ver");
     }
 
     private class getData extends AsyncTask<String, Void, String> {
@@ -172,6 +229,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         //확인 눌렀을때의 이벤트 처리
                         dialog.dismiss();
+                        android.os.Process.killProcess(android.os.Process.myPid());
                     }
                 });
         builder.show();
@@ -200,5 +258,11 @@ public class MainActivity extends AppCompatActivity {
                 //Toast.makeText(this, "권한 승인되었음", Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        verCheck();
     }
 }
