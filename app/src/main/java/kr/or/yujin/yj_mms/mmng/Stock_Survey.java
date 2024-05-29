@@ -12,6 +12,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -23,6 +24,8 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -75,12 +78,16 @@ public class Stock_Survey extends AppCompatActivity {
 
     private Vibrator vibrator;
 
+    private Button btnResultSave;
     private TextView tvStatus, tvWorker, tvSurveyNo, tvPartNo, tvLotNo, tvQty, tvPartCode, tvVendor;
     private EditText etWorker, etPartNo, etLotNo, etQty, etTotalQty, etAccumulateQty, etPartCode, etVendor;
     private Spinner spnSurveyNo;
+    private CheckBox checkBox;
     private ArrayList<String> surveyNoList; // 스피너의 네임 리스트
     private ArrayAdapter<String> surveyNoListADT; // 스피너에 사용되는 ArrayAdapter
     private int firstRun_spnSurveyNo = 0;
+
+    private String planContentNo = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,27 +139,6 @@ public class Stock_Survey extends AppCompatActivity {
         spnSurveyNo = (Spinner) findViewById(R.id.spnSurveyNo);
         spnSurveyNo.setAdapter(surveyNoListADT);
 
-        tvWorker.setOnClickListener((new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                tvStatus.setText("작업자를 입력(스캔)하여 주십시오.");
-                etWorker.setText("");
-            }
-        }));
-
-        tvSurveyNo.setOnClickListener((new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                tvStatus.setText("재고조사번호를 선택하여 주십시오.");
-
-                etPartNo.setText("");
-                etLotNo.setText("");
-                etQty.setText("");
-                etTotalQty.setText("");
-                etAccumulateQty.setText("");
-            }
-        }));
-
         spnSurveyNo.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -188,17 +174,130 @@ public class Stock_Survey extends AppCompatActivity {
         });
     }
 
+    private void checkInsert(){
+        if (etPartCode.getText().toString().length() == 0
+                || etWorker.getText().toString().length() == 0){
+            Toast.makeText(Stock_Survey.this, "필수 입력항목을 모두 입력하여 주십시오.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        String insertText = "";
+        long now = System.currentTimeMillis();
+        Date date = new Date(now);
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String getTime = df.format(date);
+
+        insertText = "insert into tb_mms_material_stock_survey_action_content(";
+        insertText += "action_content_no, plan_content_no, part_code";
+        insertText += ", vendor, part_no, lot_no, stock_qty, checker, check_date";
+        insertText += ") ";
+        insertText += "select f_mms_stock_survey_action_no(date_format(now(), '%Y-%m-%d'))";
+        insertText += ", '" + planContentNo + "'";
+        insertText += ", '" + etPartCode.getText().toString() + "'";
+        insertText += ", '" + etVendor.getText().toString() + "'";
+        insertText += ", '" + etPartNo.getText().toString() + "'";
+        insertText += ", '" + etLotNo.getText().toString() + "'";
+        insertText += ", '" + etQty.getText().toString() + "'";
+        insertText += ", '" + etWorker.getText().toString() + "'";
+        insertText += ", '" + getTime + "'";
+        insertText += ";";
+
+        Log.d(TAG, "전송할 SQL : " + insertText);
+
+        GetData taskSave = new GetData();
+        taskSave.execute("http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/MMNG/Stock_Survey/check_insert.php"
+                , "checkInsert"
+                , insertText);
+    }
+
+    public void autoCheckQuestion() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("스캔결과 자동저장");
+        //타이틀설정
+        builder.setMessage("자동저장을 활성화 하시겠습니까?");
+        builder.setCancelable(false); // 뒤로가기로 취소
+        //내용설정
+        builder.setPositiveButton("예",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        checkBox.setChecked((true));
+                    }
+                });
+
+        builder.setNegativeButton("아니오",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        checkBox.setChecked((false));
+                        //dialog.dismiss();
+                    }
+                });
+
+        builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+
+            }
+        });
+        builder.show();
+    }
+
+    private void buttonClick(View v) {
+        switch(v.getId()){
+            case R.id.checkBox:
+                if (checkBox.isChecked()){
+                    autoCheckQuestion();
+                }
+                break;
+            case R.id.btnResultSave:
+                checkInsert();
+                break;
+        }
+    }
+
+    private void tvClick(View v) {
+        switch(v.getId()){
+            case R.id.tvWorker:
+                tvStatus.setText("작업자를 입력(스캔)하여 주십시오.");
+                etWorker.setText("");
+                break;
+            case R.id.tvPartCode:
+            case R.id.tvVendor:
+            case R.id.tvPartNo:
+            case R.id.tvLotNo:
+            case R.id.tvQty:
+                tvStatus.setText("재고조사번호를 선택하여 주십시오.");
+                etPartCode.setText("");
+                etVendor.setText("");
+                etPartNo.setText("");
+                etLotNo.setText("");
+                etQty.setText("");
+                etTotalQty.setText("");
+                etAccumulateQty.setText("");
+                break;
+        }
+    }
+
     private void initControl(){
         tvStatus = (TextView) findViewById(R.id.tvStatus);
         tvStatus.setText("작업자를 입력(스캔)하여 주십시오.");
 
         tvWorker = (TextView) findViewById(R.id.tvWorker);
         tvSurveyNo = (TextView) findViewById(R.id.tvSurveyNo);
+        tvPartCode = (TextView) findViewById(R.id.tvPartCode);
+        tvVendor = (TextView) findViewById(R.id.tvVendor);
         tvPartNo = (TextView) findViewById(R.id.tvPartNo);
         tvLotNo = (TextView) findViewById(R.id.tvLotNo);
         tvQty = (TextView) findViewById(R.id.tvQty);
-        tvPartCode = (TextView) findViewById(R.id.tvPartCode);
-        tvVendor = (TextView) findViewById(R.id.tvVendor);
+        //연결
+        tvWorker.setOnClickListener(this::tvClick);
+        tvPartCode.setOnClickListener(this::tvClick);
+        tvVendor.setOnClickListener(this::tvClick);
+        tvPartNo.setOnClickListener(this::tvClick);
+        tvLotNo.setOnClickListener(this::tvClick);
+        tvQty.setOnClickListener(this::tvClick);
+
+        checkBox = (CheckBox) findViewById(R.id.checkBox);
+        //연결
+        checkBox.setOnClickListener(this::buttonClick);
 
         etWorker = (EditText) findViewById(R.id.etWorker);
         etPartNo = (EditText) findViewById(R.id.etPartNo);
@@ -210,6 +309,10 @@ public class Stock_Survey extends AppCompatActivity {
         etVendor = (EditText) findViewById(R.id.etVendor);
 
         spnSurveyNo = (Spinner) findViewById(R.id.spnSurveyNo);
+
+        btnResultSave = (Button) findViewById(R.id.btnResultSave);
+        //연결
+        btnResultSave.setOnClickListener(this::buttonClick);
     }
 
     private void verCheck(){
@@ -305,6 +408,8 @@ public class Stock_Survey extends AppCompatActivity {
                 postParameters += "&PartCode=" + params[3];
             } else if (secondString.equals("ver")) {
                 postParameters = "";
+            } else if (secondString.equals("checkInsert")) {
+                postParameters = "sql=" + params[2];
             }
 
             try {
@@ -389,7 +494,12 @@ public class Stock_Survey extends AppCompatActivity {
                 } else if (header.equals("stock_Qty")){
                     JSONArray jsonArray = jsonObject.getJSONArray("stock_Qty");
                     JSONObject item = jsonArray.getJSONObject(0);
-                    etTotalQty.setText( item.getString("Stock_Qty"));
+                    etTotalQty.setText(item.getString("Stock_Qty"));
+                    planContentNo = item.getString("Plan_Content_No");
+                    etAccumulateQty.setText(item.getString("Accumulated_Qty"));
+                    if (checkBox.isChecked()){
+                        checkInsert();
+                    }
                 } else if (header.equals("stock_Qty!")){
                     Toast.makeText(Stock_Survey.this, "해당 자재를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show();
                     tvStatus.setText("해당 자재를 찾을 수 없습니다.\n 다시 스캔하여 주십시오.");
@@ -397,8 +507,29 @@ public class Stock_Survey extends AppCompatActivity {
                     etPartNo.setText("");
                     etLotNo.setText("");
                     etQty.setText("");
+                    etTotalQty.setText("");
+                    etAccumulateQty.setText("");
                 } else if (header.equals("surveyNo!")) {
                     Toast.makeText(Stock_Survey.this, "등록된 재고조사항목이 없습니다.", Toast.LENGTH_SHORT).show();
+                } else if (header.equals("insert")) {
+                    JSONArray jsonArray = jsonObject.getJSONArray("insert");
+                    JSONObject item = jsonArray.getJSONObject(0);
+                    if (!item.getString("Result").equals("Success")) {
+                        Toast.makeText(Stock_Survey.this, mJsonString, Toast.LENGTH_SHORT).show();
+                        long[] pattern = {500,1000,500,1000};
+                        vibrator.vibrate(pattern, -1); // miliSecond, 지정한 시간동안 진동
+                        return;
+                    }
+                    vibrator.vibrate(100); // miliSecond, 지정한 시간동안 진동
+                    etPartCode.setText("");
+                    etVendor.setText("");
+                    etPartNo.setText("");
+                    etLotNo.setText("");
+                    etQty.setText("");
+                    etTotalQty.setText("");
+                    etAccumulateQty.setText("");
+                    tvStatus.setText("저장완료.\n다음 자재를 스캔하여 주십시오.");
+                    Toast.makeText(Stock_Survey.this, "저장완료.\n다음 자재를 스캔하여 주십시오.", Toast.LENGTH_SHORT).show();
                 } else if (header.equals("CheckVer")) {
                     JSONArray jsonArray = jsonObject.getJSONArray("CheckVer");
                     JSONObject item = jsonArray.getJSONObject(0);
