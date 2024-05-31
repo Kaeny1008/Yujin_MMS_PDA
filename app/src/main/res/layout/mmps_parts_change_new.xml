@@ -166,12 +166,14 @@
 
             </LinearLayout>
 
+            <!-- 숨겨두었다 -->
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
                 android:layout_weight="0"
                 android:background="@drawable/text_border_white_back_color"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:visibility="invisible">
 
                 <TextView
                     android:id="@+id/tvMainPartNo"
@@ -254,19 +256,19 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/tvBefPartNo"
+                    android:id="@+id/tvBefPartCode"
                     android:layout_width="150dp"
                     android:layout_height="32dp"
                     android:layout_weight="0"
                     android:background="@drawable/text_border_blue"
                     android:gravity="fill"
-                    android:text="Part No."
+                    android:text="Part Code"
                     android:textAlignment="center"
                     android:textColor="#FFFFFF"
                     android:textSize="17dp" />
 
                 <EditText
-                    android:id="@+id/etBefPartNo"
+                    android:id="@+id/etBefPartCode"
                     android:layout_width="match_parent"
                     android:layout_height="32dp"
                     android:layout_weight="0"
@@ -324,6 +326,41 @@
                     android:layout_weight="0"
                     android:spinnerMode="dialog"
                     android:textAlignment="center"
+                    android:textSize="17dp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0"
+                android:background="@drawable/text_border_white_back_color"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvAftPartCode"
+                    android:layout_width="150dp"
+                    android:layout_height="32dp"
+                    android:layout_weight="0"
+                    android:background="@drawable/text_border_blue"
+                    android:gravity="fill"
+                    android:text="Part Code"
+                    android:textAlignment="center"
+                    android:textColor="#FFFFFF"
+                    android:textSize="17dp" />
+
+                <EditText
+                    android:id="@+id/etAftPartCode"
+                    android:layout_width="match_parent"
+                    android:layout_height="32dp"
+                    android:layout_weight="0"
+                    android:background="@drawable/text_border_lightblue"
+                    android:enabled="false"
+                    android:inputType="text"
+                    android:selectAllOnFocus="true"
+                    android:textAlignment="center"
+                    android:textColor="#000000"
+                    android:textColorHint="#c9c9c9"
                     android:textSize="17dp" />
 
             </LinearLayout>
@@ -444,7 +481,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:checked="true"
+                    android:checked="false"
                     android:text="수량 자동입력 X" />
             </LinearLayout>
 

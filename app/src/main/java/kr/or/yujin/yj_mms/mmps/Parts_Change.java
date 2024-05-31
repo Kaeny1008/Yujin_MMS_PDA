@@ -54,8 +54,8 @@ import kr.or.yujin.yj_mms.R;
 
 public class Parts_Change extends AppCompatActivity {
 
-    private EditText etWorker, etMainDDCode, etMainPartNo, etFeederSN, etBefPartNo, etAftPartNo, etAftLotNo, etAftQty;
-    private TextView tvMainDDCode, tvWorker, tvFeederSN, tvBefPartNo, tvAftPartNo, tvAftLotNo, tvAftQty, tvStatus;
+    private EditText etWorker, etMainDDCode, etMainPartNo, etFeederSN, etBefPartCode, etAftPartCode, etAftPartNo, etAftLotNo, etAftQty;
+    private TextView tvMainDDCode, tvWorker, tvFeederSN, tvBefPartCode, tvAftPartCode, tvAftPartNo, tvAftLotNo, tvAftQty, tvStatus;
     private Spinner spnBefMaker, spnAftMaker;
     private CheckBox noQtyAuto;
 
@@ -199,18 +199,32 @@ public class Parts_Change extends AppCompatActivity {
             }
         }));
 
-        tvBefPartNo.setOnClickListener((new View.OnClickListener() {
+        tvBefPartCode.setOnClickListener((new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                etBefPartNo.setText("");
+                etBefPartCode.setText("");
                 tvStatus.setText("교환 전 자재의 제조사를 선택 후 자재 정보를 입력하여 주십시오.");
+            }
+        }));
+
+        tvAftPartCode.setOnClickListener((new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                etAftPartCode.setText("");
+                etAftPartNo.setText("");
+                etAftLotNo.setText("");
+                etAftQty.setText("");
+                tvStatus.setText("교환 후 자재의 제조사를 선택 후 자재 정보를 입력하여 주십시오.");
             }
         }));
 
         tvAftPartNo.setOnClickListener((new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                etAftPartCode.setText("");
                 etAftPartNo.setText("");
+                etAftLotNo.setText("");
+                etAftQty.setText("");
                 tvStatus.setText("교환 후 자재의 제조사를 선택 후 자재 정보를 입력하여 주십시오.");
             }
         }));
@@ -218,7 +232,10 @@ public class Parts_Change extends AppCompatActivity {
         tvAftLotNo.setOnClickListener((new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                etAftPartCode.setText("");
+                etAftPartNo.setText("");
                 etAftLotNo.setText("");
+                etAftQty.setText("");
                 tvStatus.setText("교환 후 자재의 제조사를 선택 후 자재 정보를 입력하여 주십시오.");
             }
         }));
@@ -226,6 +243,9 @@ public class Parts_Change extends AppCompatActivity {
         tvAftQty.setOnClickListener((new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                etAftPartCode.setText("");
+                etAftPartNo.setText("");
+                etAftLotNo.setText("");
                 etAftQty.setText("");
                 tvStatus.setText("교환 후 자재의 제조사를 선택 후 자재 정보를 입력하여 주십시오.");
             }
@@ -237,8 +257,8 @@ public class Parts_Change extends AppCompatActivity {
                 !etMainDDCode.getText().toString().equals("") &&
                 !etMainPartNo.getText().toString().equals("") &&
                 !etFeederSN.getText().toString().equals("") &&
-                !etBefPartNo.getText().toString().equals("") &&
-                !etAftPartNo.getText().toString().equals("") &&
+                !etBefPartCode.getText().toString().equals("") &&
+                !etAftPartCode.getText().toString().equals("") &&
                 !spnAftMaker.getSelectedItem().toString().equals("") &&
                 !spnBefMaker.getSelectedItem().toString().equals("")){
 
@@ -290,10 +310,10 @@ public class Parts_Change extends AppCompatActivity {
             partNo = orgPartNo.split(",");
 
             for (int i = 0; i < partNo.length; i++){
-                if (etBefPartNo.getText().toString().equals(partNo[i])){
+                if (etBefPartCode.getText().toString().equals(partNo[i])){
                     befPartExist = true;
                 }
-                if (etAftPartNo.getText().toString().equals(partNo[i])){
+                if (etAftPartCode.getText().toString().equals(partNo[i])){
                     aftPartExist = true;
                 }
                 if (befPartExist == true && aftPartExist == true){
@@ -326,7 +346,7 @@ public class Parts_Change extends AppCompatActivity {
             // 정상교환 진동
             vibrator.vibrate(100); // miliSecond, 지정한 시간동안 진동
             /*
-            if (orgPartNo.indexOf(etBefPartNo.getText().toString())< 0 ) { // 교환 전 자재가 다르다면
+            if (orgPartNo.indexOf(etBefPartCode.getText().toString())< 0 ) { // 교환 전 자재가 다르다면
                 MisCheckActivity.showText = "교환 전 Part No.가 다릅니다.";
                 MisCheckActivity.ngSection = "NG1";
                 vibrator.vibrate(1000); // miliSecond, 지정한 시간동안 진동
@@ -335,7 +355,7 @@ public class Parts_Change extends AppCompatActivity {
                 return;
             }
 
-            if (orgPartNo.indexOf(etAftPartNo.getText().toString())< 0 ) { // 교환 후 자재가 다르다면
+            if (orgPartNo.indexOf(etAftPartCode.getText().toString())< 0 ) { // 교환 후 자재가 다르다면
                 MisCheckActivity.showText = "교환 후 Part No.가 다릅니다.";
                 MisCheckActivity.ngSection = "NG2";
                 vibrator.vibrate(1000); // miliSecond, 지정한 시간동안 진동
@@ -396,8 +416,9 @@ public class Parts_Change extends AppCompatActivity {
         insertText += ", dd_main_no = '" + etMainDDCode.getText().toString() + "'";
         insertText += ", machine_no = '" + machineNo + "'";
         insertText += ", feeder_no = '" + feederNo + "'";
-        insertText += ", org_part_no = '" + etMainPartNo.getText().toString() + "'";
-        insertText += ", bef_part_no = '" + etBefPartNo.getText().toString() + "'";
+        insertText += ", org_part_code = '" + etMainPartNo.getText().toString() + "'";
+        insertText += ", bef_part_code = '" + etBefPartCode.getText().toString() + "'";
+        insertText += ", chg_part_code = '" + etAftPartCode.getText().toString() + "'";
         insertText += ", chg_part_no = '" + etAftPartNo.getText().toString() + "'";
         insertText += ", chg_lot_no = '" + etAftLotNo.getText().toString() + "'";
         insertText += ", CHG_QTY = '" + Integer.parseInt(etAftQty.getText().toString()) + "'";
@@ -479,30 +500,30 @@ public class Parts_Change extends AppCompatActivity {
                             } else {
                                 Toast.makeText(Parts_Change.this, "Feeder Serial No.를 스캔하여 주십시오.", Toast.LENGTH_SHORT).show();
                             }
-                        } else if (etBefPartNo.length() == 0) {
+                        } else if (etBefPartCode.length() == 0) {
                             // 유진발행 라벨 및 공급사에서 붙혀오는 라벨을 바코드 분리작업
-                            // 110404167!WR04X1202FTL!20240502001!10000!WALSIN
+                            // 110404167!WR04X1202FTL!20240502001!10000!WALSIN!2024.05.02
                             String[] splitBarcode = mDecodeResult.toString().split("!");
 
                             if (splitBarcode.length != 5) {
                                 Toast.makeText(Parts_Change.this, "유진발행 또는 공급사 부착 라벨을 스캔하여 주십시오.", Toast.LENGTH_SHORT).show();
                             } else {
-                                etBefPartNo.setText(splitBarcode[0]);
+                                etBefPartCode.setText(splitBarcode[0]);
                                 tvStatus.setText("교환 자재의 정보를 입력하여 주십시오.");
                             }
 
                             // 모든정보가 입력이 되었다면 결과를 확인 한다.
                             // 자재 정보가 비워 있지 않다면.
-                            if (etAftPartNo.length() != 0 &&
+                            if (etAftPartCode.length() != 0 &&
                                     etAftLotNo.length() != 0 &&
                                     etAftQty.length() != 0 &&
-                                    etBefPartNo.length() != 0) {
+                                    etBefPartCode.length() != 0) {
 
                                 // 결과를 확인 한다.
                                 actionWrite();
                                 //tvStatus.setText("확인 버튼을 눌러 주십시오.");
                             }
-                        } else if (etAftPartNo.length() == 0){
+                        } else if (etAftPartCode.length() == 0){
                             // 유진발행 라벨 및 공급사에서 붙혀오는 라벨을 바코드 분리작업
                             // 110404167!WR04X1202FTL!20240502001!10000!WALSIN
                             String[] splitBarcode = mDecodeResult.toString().split("!");
@@ -510,17 +531,18 @@ public class Parts_Change extends AppCompatActivity {
                             if (splitBarcode.length != 5) {
                                 Toast.makeText(Parts_Change.this, "유진발행 또는 공급사 부착 라벨을 스캔하여 주십시오.", Toast.LENGTH_SHORT).show();
                             } else {
-                                etAftPartNo.setText(splitBarcode[0]);
+                                etAftPartCode.setText(splitBarcode[0]);
+                                etAftPartNo.setText(splitBarcode[1]);
                                 etAftLotNo.setText(splitBarcode[2]);
                                 etAftQty.setText((splitBarcode[3]));
                             }
 
                             // 모든정보가 입력이 되었다면 결과를 확인 한다.
                             // 자재 정보가 비워 있지 않다면.
-                            if (etAftPartNo.length() != 0 &&
+                            if (etAftPartCode.length() != 0 &&
                                     etAftLotNo.length() != 0 &&
                                     etAftQty.length() != 0 &&
-                                    etBefPartNo.length() != 0) {
+                                    etBefPartCode.length() != 0) {
 
                                 // 결과를 확인 한다.
                                 actionWrite();
@@ -535,16 +557,16 @@ public class Parts_Change extends AppCompatActivity {
                             // 21-01-22 박시현
 
                             String selPartMaker = "";
-                            if (etBefPartNo.length() == 0 ) {
+                            if (etBefPartCode.length() == 0 ) {
                                 selPartMaker = spnBefMaker.getSelectedItem().toString();
-                            } else if (etAftPartNo.length() == 0 || etAftLotNo.length() == 0 || etAftQty.length() == 0){
+                            } else if (etAftPartCode.length() == 0 || etAftLotNo.length() == 0 || etAftQty.length() == 0){
                                 selPartMaker = spnAftMaker.getSelectedItem().toString();
                             }
 
                             String replaceBarcode = StringUtil.barcodeChange(mDecodeResult.toString());
                             getData php_barcodeSplit = new getData();
                             //아이디스 일경우 해독과 비해독이 존재하므로 나눠줘야 한다.
-                            if (selPartMaker.contains("아이디스") && etAftPartNo.getText().toString().length() > 0 && etAftLotNo.getText().length() > 0) {
+                            if (selPartMaker.contains("아이디스") && etAftPartCode.getText().toString().length() > 0 && etAftLotNo.getText().length() > 0) {
                                 php_barcodeSplit.execute("http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/MMPS_V2/BarcodeSplit/barcodesplit.php",
                                         "BarcodeSplit",
                                         "아이디스2",
@@ -673,7 +695,8 @@ public class Parts_Change extends AppCompatActivity {
         etMainDDCode = (EditText) findViewById(R.id.etMainDDCode);
         etMainPartNo = (EditText) findViewById(R.id.etMainPartNo);
         etFeederSN = (EditText) findViewById(R.id.etFeederSN);
-        etBefPartNo = (EditText) findViewById(R.id.etBefPartNo);
+        etBefPartCode = (EditText) findViewById(R.id.etBefPartCode);
+        etAftPartCode = (EditText) findViewById(R.id.etAftPartCode);
         etAftPartNo = (EditText) findViewById(R.id.etAftPartNo);
         etAftLotNo = (EditText) findViewById(R.id.etAftLotNo);
         etAftQty = (EditText) findViewById(R.id.etAftQty);
@@ -683,7 +706,8 @@ public class Parts_Change extends AppCompatActivity {
         tvMainDDCode = (TextView) findViewById(R.id.tvMainDDCode);
         tvWorker = (TextView) findViewById(R.id.tvWorker);
         tvFeederSN = (TextView) findViewById(R.id.tvFeederSN);
-        tvBefPartNo = (TextView) findViewById(R.id.tvBefPartNo);
+        tvBefPartCode = (TextView) findViewById(R.id.tvBefPartCode);
+        tvAftPartCode = (TextView) findViewById(R.id.tvAftPartCode);
         tvAftPartNo = (TextView) findViewById(R.id.tvAftPartNo);
         tvAftLotNo = (TextView) findViewById(R.id.tvAftLotNo);
         tvAftQty = (TextView) findViewById(R.id.tvAftQty);
@@ -933,7 +957,8 @@ public class Parts_Change extends AppCompatActivity {
                         //etMainDDCode.setText("");
                         etMainPartNo.setText("");
                         etFeederSN.setText("");
-                        etBefPartNo.setText("");
+                        etBefPartCode.setText("");
+                        etAftPartCode.setText("");
                         etAftPartNo.setText("");
                         etAftLotNo.setText("");
                         etAftQty.setText("");
@@ -952,7 +977,8 @@ public class Parts_Change extends AppCompatActivity {
                         Toast.makeText(Parts_Change.this, mJsonString, Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(Parts_Change.this, "NG1 저장 완료.", Toast.LENGTH_SHORT).show();
-                        etBefPartNo.setText("");
+                        etBefPartCode.setText("");
+                        etAftPartCode.setText("");
                         etAftPartNo.setText("");
                         etAftLotNo.setText("");
                         etAftQty.setText("");
@@ -968,7 +994,8 @@ public class Parts_Change extends AppCompatActivity {
                     } else {
                         Toast.makeText(Parts_Change.this, "NG2 저장 완료.", Toast.LENGTH_SHORT).show();
                         //저장완료시 컨트롤 초기화
-                        etBefPartNo.setText("");
+                        etBefPartCode.setText("");
+                        etAftPartCode.setText("");
                         etAftPartNo.setText("");
                         etAftLotNo.setText("");
                         etAftQty.setText("");
@@ -989,19 +1016,19 @@ public class Parts_Change extends AppCompatActivity {
                             String nowLotNo = partInfo[1].replace("L:", "");
                             String nowQty = partInfo[2].replace("Q:", "");
                             String nowORG = partInfo[3].replace("ORG:", "");
-                            if (etBefPartNo.length() == 0) {
+                            if (etBefPartCode.length() == 0) {
                                 if (!nowORG.equals("")) {
-                                    etBefPartNo.setText(nowORG);
+                                    etBefPartCode.setText(nowORG);
                                 } else {
-                                    etBefPartNo.setText(nowPartNo);
+                                    etBefPartCode.setText(nowPartNo);
                                 }
                                 tvStatus.setText("교환 후 자재의 제조사를 선택 후 자재 정보를 입력하여 주십시오.");
-                            } else if (etAftPartNo.length() == 0) {
+                            } else if (etAftPartCode.length() == 0) {
                                 if (!nowORG.equals("")) {
-                                    etAftPartNo.setText(nowORG);
+                                    etAftPartCode.setText(nowORG);
                                 } else {
-                                    if (etAftPartNo.getText().toString().equals("")){
-                                        etAftPartNo.setText(nowPartNo);
+                                    if (etAftPartCode.getText().toString().equals("")){
+                                        etAftPartCode.setText(nowPartNo);
                                     }
                                     if (etAftLotNo.getText().toString().equals("")) {
                                         etAftLotNo.setText(nowLotNo);
@@ -1013,7 +1040,7 @@ public class Parts_Change extends AppCompatActivity {
                                 tvStatus.setText("교환 후 자재의 제조사를 선택 후 자재 정보를 입력하여 주십시오.");
 
                                 // 자재 정보가 비워 있지 않다면.
-                                if (etAftPartNo.length() != 0 &&
+                                if (etAftPartCode.length() != 0 &&
                                         etAftLotNo.length() != 0 &&
                                         etAftQty.length() != 0) {
                                     // 결과를 확인할지 물어본다.
@@ -1027,8 +1054,8 @@ public class Parts_Change extends AppCompatActivity {
                                 if (!nowORG.equals("")) {
                                     etAftLotNo.setText(nowORG);
                                 } else {
-                                    if (etAftPartNo.getText().toString().equals("")){
-                                        etAftPartNo.setText(nowPartNo);
+                                    if (etAftPartCode.getText().toString().equals("")){
+                                        etAftPartCode.setText(nowPartNo);
                                     }
                                     if (etAftLotNo.getText().toString().equals("")) {
                                         etAftLotNo.setText(nowLotNo);
@@ -1041,7 +1068,7 @@ public class Parts_Change extends AppCompatActivity {
                                 //qtyWriteQuestion();
 
                                 // 자재 정보가 비워 있지 않다면.
-                                if (etAftPartNo.length() != 0 &&
+                                if (etAftPartCode.length() != 0 &&
                                         etAftLotNo.length() != 0 &&
                                         etAftQty.length() != 0) {
                                     // 결과를 확인할지 물어본다.
@@ -1055,8 +1082,8 @@ public class Parts_Change extends AppCompatActivity {
                                 if (!nowORG.equals("")) {
                                     etAftQty.setText(nowORG);
                                 } else {
-                                    if (etAftPartNo.getText().toString().equals("")){
-                                        etAftPartNo.setText(nowPartNo);
+                                    if (etAftPartCode.getText().toString().equals("")){
+                                        etAftPartCode.setText(nowPartNo);
                                     }
                                     if (etAftLotNo.getText().toString().equals("")) {
                                         etAftLotNo.setText(nowLotNo);
@@ -1067,7 +1094,7 @@ public class Parts_Change extends AppCompatActivity {
                                 }
                                 tvStatus.setText("확인 버튼을 눌러 주십시오.");
 
-                                if (etAftPartNo.length() != 0 &&
+                                if (etAftPartCode.length() != 0 &&
                                         etAftLotNo.length() != 0 &&
                                         etAftQty.length() != 0) {
                                     // 결과를 확인할지 물어본다.
