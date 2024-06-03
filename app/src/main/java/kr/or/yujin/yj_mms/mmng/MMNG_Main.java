@@ -39,7 +39,7 @@ public class MMNG_Main extends AppCompatActivity {
 
     private String activityTag = "자재관리 Main Activity";
 
-    private ImageButton btnStockSurvey;
+    private ImageButton btnStockSurvey, btnMaterial_In_Check;
     private TextView loginStatus;
 
     @Override
@@ -51,6 +51,8 @@ public class MMNG_Main extends AppCompatActivity {
         loginStatus.setText("자재관리 시스템 V" + BuildConfig.VERSION_NAME);
 
         btnStockSurvey = (ImageButton) findViewById(R.id.btnStockSurvey);
+        btnMaterial_In_Check = (ImageButton) findViewById(R.id.btnMaterial_In_Check);
+
 
         btnStockSurvey.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
