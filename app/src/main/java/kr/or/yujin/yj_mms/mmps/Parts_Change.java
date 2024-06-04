@@ -505,7 +505,7 @@ public class Parts_Change extends AppCompatActivity {
                             // 110404167!WR04X1202FTL!20240502001!10000!WALSIN!2024.05.02
                             String[] splitBarcode = mDecodeResult.toString().split("!");
 
-                            if (splitBarcode.length != 5) {
+                            if (splitBarcode.length < 5) {
                                 Toast.makeText(Parts_Change.this, "유진발행 또는 공급사 부착 라벨을 스캔하여 주십시오.", Toast.LENGTH_SHORT).show();
                             } else {
                                 etBefPartCode.setText(splitBarcode[0]);

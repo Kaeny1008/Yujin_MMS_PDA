@@ -60,6 +60,13 @@ public class MMNG_Main extends AppCompatActivity {
                 startActivity(intent);//액티비티 띄우기
             }
         });
+
+        btnMaterial_In_Check.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(MMNG_Main.this, Warehousing_Check.class);
+                startActivity(intent);//액티비티 띄우기
+            }
+        });
     }
 
     private void verCheck(){

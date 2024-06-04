@@ -26,6 +26,9 @@
         android:theme="@style/NoTitle"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".mmng.Warehousing_Check"
+            android:exported="false" />
+        <activity
             android:name=".mmng.Stock_Survey"
             android:exported="false" />
         <activity
