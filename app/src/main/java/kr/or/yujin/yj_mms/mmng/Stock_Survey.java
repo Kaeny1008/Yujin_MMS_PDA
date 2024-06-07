@@ -195,8 +195,8 @@ public class Stock_Survey extends AppCompatActivity {
         insertText += ", '" + planContentNo + "'";
         insertText += ", '" + etPartCode.getText().toString() + "'";
         insertText += ", '" + etVendor.getText().toString() + "'";
-        insertText += ", '" + etPartNo.getText().toString() + "'";
-        insertText += ", '" + etLotNo.getText().toString() + "'";
+        insertText += ", '" + etPartNo.getText().toString().replace("'", "\\'") + "'";
+        insertText += ", '" + etLotNo.getText().toString().replace("'", "\\'") + "'";
         insertText += ", '" + etQty.getText().toString() + "'";
         insertText += ", '" + etWorker.getText().toString() + "'";
         insertText += ", '" + getTime + "'";
@@ -354,6 +354,7 @@ public class Stock_Survey extends AppCompatActivity {
                                 etLotNo.setText(barcode[2]);
                                 etQty.setText(barcode[3]);
                                 etVendor.setText(barcode[4]);
+                                Log.d(TAG, "변환 : " + etPartNo.getText().toString().replace("'", ""));
 
                                 GetData getData = new GetData();
                                 getData.execute("http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/MMNG/Stock_Survey/load_stock_qty.php"
