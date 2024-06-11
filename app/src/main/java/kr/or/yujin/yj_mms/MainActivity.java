@@ -14,6 +14,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -39,6 +40,7 @@ import device.common.ScanConst;
 import kr.or.yujin.yj_mms.common.ForecdTerminationService;
 import kr.or.yujin.yj_mms.mmng.MMNG_Main;
 import kr.or.yujin.yj_mms.mmps.MMPS_Main;
+import kr.or.yujin.yj_mms.smt_production.SMT_Production_Main;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -46,8 +48,8 @@ public class MainActivity extends AppCompatActivity {
     public static String server_ip;
     public static int server_port; //실제 SQL포트가 아닌 php포트
 
-    private ImageButton btnSetting, btnMaterial, btnMMPS;
-    public static Boolean materialForm, settingForm, mmpsForm;
+    private ImageButton btnSetting, btnMaterial, btnMMPS, btn_SMT_Production;
+    public static Boolean materialForm, settingForm, mmpsForm, smt_Form;
 
     private TextView loginStatus;
 
@@ -67,9 +69,11 @@ public class MainActivity extends AppCompatActivity {
         btnSetting = (ImageButton) findViewById(R.id.btnSetting);
         btnMaterial = (ImageButton) findViewById(R.id.btnMaterial);
         btnMMPS = (ImageButton) findViewById(R.id.btnMMPS);
+        btn_SMT_Production = (ImageButton) findViewById(R.id.btn_SMT_Production);
         materialForm = false;
         settingForm = false;
         mmpsForm = false;
+        smt_Form = false;
 
         btnSetting.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -103,6 +107,18 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(intent);//액티비티 띄우기
                 } else {
                     Log.d(activityTag, "오삽방지시스템 페이지가 열려있다.");
+                }
+            }
+        });
+
+        btn_SMT_Production.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                if (smt_Form == false){
+                    smt_Form = true;
+                    Intent intent = new Intent(MainActivity.this, SMT_Production_Main.class);
+                    startActivity(intent);//액티비티 띄우기
+                } else {
+                    Log.d(activityTag, "SMT 생산 페이지가 열려있다.");
                 }
             }
         });

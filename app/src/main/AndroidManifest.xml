@@ -26,6 +26,15 @@
         android:theme="@style/NoTitle"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".smt_production.SMT_Production_Start_Check"
+            android:exported="false" />
+        <activity
+            android:name=".smt_production.SMT_Production_Start"
+            android:exported="false" />
+        <activity
+            android:name=".smt_production.SMT_Production_Main"
+            android:exported="false" />
+        <activity
             android:name=".mmng.Warehousing_Check"
             android:exported="false" />
         <activity
