@@ -1,0 +1,369 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".smt_production.SMT_Production_Working"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    >
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@drawable/text_border_title"
+        android:gravity="center_vertical"
+        android:text="SMT 작업현황"
+        android:textColor="#FFFF"
+        android:textSize="30dp"
+        android:textStyle="bold"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="9">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="10dp"/>
+
+            <TextView
+                android:id="@+id/tvInformation"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:background="@drawable/text_border_subtitle"
+                android:gravity="center_vertical"
+                android:text="[기본정보]"
+                android:textColor="#FFFFFF"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/text_border_white_back_color"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvOrderIndex"
+                    android:layout_width="120dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/text_border_blue"
+                    android:gravity="center"
+                    android:text="주문번호"
+                    android:textColor="#FFFFFF"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/tv_OrderIndex"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:background="@drawable/text_border_lightblue"
+                    android:gravity="center"
+                    android:textSize="20sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/text_border_white_back_color"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvCustomer"
+                    android:layout_width="120dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/text_border_blue"
+                    android:gravity="center"
+                    android:text="고객사"
+                    android:textColor="#FFFFFF"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/tv_Customer"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:background="@drawable/text_border_lightblue"
+                    android:gravity="center"
+                    android:textSize="20sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/text_border_white_back_color"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvItemCode"
+                    android:layout_width="120dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/text_border_blue"
+                    android:gravity="center"
+                    android:text="품번"
+                    android:textColor="#FFFFFF"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/tv_ItemCode"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:background="@drawable/text_border_lightblue"
+                    android:gravity="center"
+                    android:textSize="20sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@drawable/text_border_white_back_color"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvItemName"
+                    android:layout_width="120dp"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/text_border_blue"
+                    android:text="품명"
+                    android:gravity="center"
+                    android:textColor="#FFFFFF"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/tv_ItemName"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/text_border_lightblue"
+                    android:gravity="center"
+                    android:textSize="20sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/text_border_white_back_color"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvOrderQty"
+                    android:layout_width="120dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/text_border_blue"
+                    android:gravity="center"
+                    android:text="주문수량"
+                    android:textColor="#FFFFFF"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/tv_OrderQty"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:background="@drawable/text_border_lightblue"
+                    android:gravity="center"
+                    android:textSize="20sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/text_border_white_back_color"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvWorkSide"
+                    android:layout_width="120dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/text_border_blue"
+                    android:gravity="center"
+                    android:text="작업면"
+                    android:textColor="#FFFFFF"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/tv_WorkSide"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:background="@drawable/text_border_lightblue"
+                    android:gravity="center"
+                    android:textSize="20sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/text_border_white_back_color"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvDeviceData"
+                    android:layout_width="120dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/text_border_blue"
+                    android:gravity="center"
+                    android:text="DeviceData"
+                    android:textColor="#FFFFFF"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/tv_DeviceData"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:background="@drawable/text_border_lightblue"
+                    android:gravity="center"
+                    android:textSize="20sp" />
+            </LinearLayout>
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="5dp"/>
+
+            <TextView
+                android:id="@+id/tvInformation2"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:background="@drawable/text_border_subtitle"
+                android:gravity="center_vertical"
+                android:text="[작업정보]"
+                android:textColor="#FFFFFF"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/text_border_white_back_color"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvTopBottom"
+                    android:layout_width="80dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/text_border_blue"
+                    android:gravity="center"
+                    android:text="작업동"
+                    android:textColor="#FFFFFF"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/tv_Department"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:background="@drawable/text_border_lightblue"
+                    android:gravity="center"
+                    android:textSize="20sp"
+                    android:layout_weight="1"/>
+
+                <TextView
+                    android:id="@+id/tvTopBottom1"
+                    android:layout_width="80dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/text_border_blue"
+                    android:gravity="center"
+                    android:text="Line"
+                    android:textColor="#FFFFFF"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/tv_WorkLine"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:background="@drawable/text_border_lightblue"
+                    android:gravity="center"
+                    android:textSize="20sp"
+                    android:layout_weight="1"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/text_border_white_back_color"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvWorker"
+                    android:layout_width="120dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/text_border_blue"
+                    android:gravity="center"
+                    android:text="작업자"
+                    android:textColor="#FFFFFF"
+                    android:textSize="20sp" />
+
+                <EditText
+                    android:id="@+id/et_Worker"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:background="@drawable/text_border_lightblue"
+                    android:gravity="center"
+                    android:textSize="20sp"
+                    android:inputType="text"
+                    android:hint="작업자를 입력하세요."
+                    android:textColorHint="#c9c9c9"/>
+            </LinearLayout>
+
+            <CheckBox
+                android:id="@+id/cb_AllPartsCheck"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="All Parts Check 확인함" />
+        </LinearLayout>
+    </ScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnAllPartsCheck"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="All Parts Check"
+                android:textSize="17sp"
+                android:layout_weight="1"/>
+
+            <Button
+                android:id="@+id/btnPartsChange"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Parts Change"
+                android:textSize="20sp"
+                android:layout_weight="1"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnWorkingStart"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="작업 시작"
+                android:textSize="20sp"
+                android:layout_weight="1"/>
+
+            <Button
+                android:id="@+id/btnWorkingEnd"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="작업 종료"
+                android:textSize="20sp"
+                android:layout_weight="1"/>
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

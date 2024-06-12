@@ -1,4 +1,4 @@
-package kr.or.yujin.yj_mms.smt_production;
+package kr.or.yujin.yj_mms.mmps;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -12,13 +12,12 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
+import android.widget.Button;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -37,103 +36,94 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 
 import kr.or.yujin.yj_mms.BuildConfig;
 import kr.or.yujin.yj_mms.MainActivity;
 import kr.or.yujin.yj_mms.R;
-import kr.or.yujin.yj_mms.mmps.Mis_Check;
+import kr.or.yujin.yj_mms.mmng.Stock_Survey;
+import kr.or.yujin.yj_mms.smt_production.SMT_Production_Start;
+import kr.or.yujin.yj_mms.smt_production.SMT_Production_Start_Check;
+import kr.or.yujin.yj_mms.smt_production.SMT_Production_Working;
 
-public class SMT_Production_Start extends AppCompatActivity {
+public class MMPS_All_Parts_Check_List extends AppCompatActivity {
 
-    private String TAG = "SMT Production Start";
+    private String TAG = "All Parts Check List";
 
-    private Spinner spn_Department, spn_WorkLine;
-    private ArrayAdapter<String> adt_Department, adt_WorkLine; // 스피너에 사용되는 ArrayAdapter
-    private ArrayList<String> list_WorkLine;
-    private int firstRun_Department, firstRun_WorkLine = 0;
-
+    private TextView tv_DeviceData;
     private TableLayout tableLayout;
+    private String order_index;
+    private Button btnResultSave;
+
+    private Vibrator vibrator;
+    private long[] pattern1 = {100,100,100,100,100,100,100,100};
+    private long[] pattern2 = {500,1000,500,1000};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.smt_production_start);
+        setContentView(R.layout.mmps_all_parts_check_list);
 
         control_Initialize();
 
-        spn_Department.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        tv_DeviceData.setText(getIntent().getStringExtra("DD Main No"));
+        order_index = getIntent().getStringExtra("Order_Index");
+        GetData task = new GetData();
+        task.execute( "http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/SMT_Production/Production_Start/load_all_parts_check_list.php"
+                , "Load Machine List"
+                , tv_DeviceData.getText().toString()
+        );
+
+        btnResultSave.setOnClickListener((new View.OnClickListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (firstRun_Department == 0) { //자동실행 방지
-                    firstRun_Department += 1;
+            public void onClick(View v) {
+                if (allList_Check()) {
+                    vibrator.vibrate(pattern1, -1); // miliSecond, 지정한 시간동안 진동
+                    String strSQL = "update tb_mms_order_register_list set smd_all_parts_check = 'Yes'";
+                    strSQL += " where order_index = '" + order_index + "';";
+
+                    GetData taskSave = new GetData();
+                    taskSave.execute("http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/SMT_Production/Production_Start/check_insert.php"
+                            , "Check_Insert"
+                            , strSQL);
                 } else {
-                    String factoryCode = "";
-                    if (spn_Department.getSelectedItem().toString().equals("C동")){
-                        factoryCode = "SC00000003";
-                    } else if (spn_Department.getSelectedItem().toString().equals("D동")){
-                        factoryCode = "SC00000004";
-                    }
-                    GetData task_VerLoad = new GetData();
-                    task_VerLoad.execute( "http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/SMT_Production/Production_Start/load_work_line.php"
-                            , "Select Department"
-                            , factoryCode
-                    );
+                    vibrator.vibrate(pattern2, -1); // miliSecond, 지정한 시간동안 진동
+                    Toast.makeText(MMPS_All_Parts_Check_List.this
+                            , "모든 항목이 확인되지 않았습니다."
+                            , Toast.LENGTH_SHORT).show();
                 }
             }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                // Dummy
-            }
-        });
-
-        spn_WorkLine.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (firstRun_WorkLine == 0) { //자동실행 방지
-                    firstRun_WorkLine += 1;
-                } else {
-                    load_PlanList();
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                // Dummy
-            }
-        });
+        }));
     }
 
-    private void load_PlanList(){
-        if (!spn_Department.getSelectedItem().toString().equals("선택")
-                && !spn_WorkLine.getSelectedItem().toString().equals("")
-                && !spn_WorkLine.getSelectedItem().toString().equals("선택")){
-            GetData task_VerLoad = new GetData();
-            task_VerLoad.execute( "http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/SMT_Production/Production_Start/load_plan_list.php"
-                    , "Load Plan List"
-                    , spn_Department.getSelectedItem().toString()
-                    , spn_WorkLine.getSelectedItem().toString()
-            );
+    private Boolean allList_Check(){
+        Integer checkCount = 0;
+        TableLayout tableView = (TableLayout) findViewById(R.id.tlList);
+        View myTempView = null;
+        int noOfChild = tableView.getChildCount();
+        for (int i = 1; i < noOfChild; i++) {
+            myTempView = tableView.getChildAt(i);
+            View vv = ((TableRow) myTempView).getChildAt(3);
+            if (vv instanceof TextView) {
+                //Log.d(TAG, "현재 행 : " + ((TextView) vv).getText().toString());
+                if (!((TextView) vv).getText().toString().equals("")) {
+                    checkCount +=1;
+                }
+            }
+        }
+        Log.e(TAG, "Table Row Count : " + (noOfChild-1) + ",   확인 Count : " + checkCount);
+        if ((noOfChild-1)==checkCount){
+            return true;
+        } else {
+            return false;
         }
     }
 
     private void control_Initialize(){
-        spn_Department = (Spinner) findViewById(R.id.spn_Department);
-        spn_WorkLine = (Spinner) findViewById(R.id.spn_WorkLine);
-
-        String[] department = {"선택","C동","D동"};
-        adt_Department = new ArrayAdapter<String>(this,
-                R.layout.support_simple_spinner_dropdown_item, department);
-        spn_Department.setAdapter(adt_Department);
-
-        list_WorkLine = new ArrayList<String>();
-        adt_WorkLine = new ArrayAdapter<String>(this,
-                R.layout.support_simple_spinner_dropdown_item, list_WorkLine);
-        spn_WorkLine.setAdapter(adt_WorkLine);
-
+        vibrator = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
+        tv_DeviceData = (TextView) findViewById(R.id.tv_DeviceData);
         tableLayout = (TableLayout) findViewById(R.id.tlList);
+        btnResultSave = (Button) findViewById(R.id.btnResultSave);
     }
 
     private void verCheck(){
@@ -155,7 +145,7 @@ public class SMT_Production_Start extends AppCompatActivity {
             String ActivityName = componentName.getShortClassName().substring(1);
 
             if (ActivityName.equals("App.Activity.AllPartsCheck"))
-                progressDialog = ProgressDialog.show(SMT_Production_Start.this,
+                progressDialog = ProgressDialog.show(MMPS_All_Parts_Check_List.this,
                         "Connecting to server....\nPlease wait.", null, true, true);
         }
 
@@ -169,11 +159,10 @@ public class SMT_Production_Start extends AppCompatActivity {
 
             if (secondString.equals("ver")) {
                 postParameters = "";
-            } else if (secondString.equals("Select Department")) {
-                postParameters = "factoryCode=" + params[2];
-            } else if (secondString.equals("Load Plan List")) {
-                postParameters = "factoryName=" + params[2];
-                postParameters += "&workLine=" + params[3];
+            } else if (secondString.equals("Load Machine List")) {
+                postParameters = "DD_Main_No=" + params[2];
+            } else if (secondString.equals("Check_Insert")) {
+                postParameters = "sql=" + params[2];
             }
 
             try {
@@ -227,7 +216,7 @@ public class SMT_Production_Start extends AppCompatActivity {
 
             if (result == null){
                 Log.d(TAG, "서버 접속 Error - " + errorString);
-                Toast.makeText(SMT_Production_Start.this, "서버에 접속 할 수 없습니다.\n상세 내용은 로그를 참조 하십시오.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MMPS_All_Parts_Check_List.this, "서버에 접속 할 수 없습니다.\n상세 내용은 로그를 참조 하십시오.", Toast.LENGTH_SHORT).show();
             } else {
                 Log.d(TAG, "서버 응답 내용 - " + result);
                 showResult(result);
@@ -249,29 +238,14 @@ public class SMT_Production_Start extends AppCompatActivity {
                     if (!item.getString("Result").equals("Ver:" + BuildConfig.VERSION_NAME)) {
                         appVerAlarm();
                     }
-                } else if (header.equals("List_Work_Line")) {
-                    list_WorkLine.clear();
-                    list_WorkLine.add("선택");
-
-                    JSONArray jsonArray = jsonObject.getJSONArray("List_Work_Line");
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        JSONObject item = jsonArray.getJSONObject(i);
-                        list_WorkLine.add(item.getString("Work_Line"));
-                    }
-                    adt_WorkLine.notifyDataSetChanged();
-                } else if (header.equals("List_Work_Line!")) {
-                    list_WorkLine.clear();
-                    list_WorkLine.add("라인이 없습니다.");
-                    adt_WorkLine.notifyDataSetChanged();
-                    Toast.makeText(SMT_Production_Start.this, "라인이 없습니다.", Toast.LENGTH_SHORT).show();
-                } else if (header.equals("Plan_List")) {
+                } else if (header.equals("Load_Machine_List")) {
                     //테이블 레이아웃 초기화
                     tableLayout.removeViews(1, tableLayout.getChildCount()-1);
 
-                    JSONArray jsonArray = jsonObject.getJSONArray("Plan_List");
+                    JSONArray jsonArray = jsonObject.getJSONArray("Load_Machine_List");
                     for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject item = jsonArray.getJSONObject(i);
-                        final TableRow tableRow = new TableRow(SMT_Production_Start.this); //tablerow 생성
+                        final TableRow tableRow = new TableRow(MMPS_All_Parts_Check_List.this); //tablerow 생성
                         tableRow.setLayoutParams(new TableRow.LayoutParams(
                                 ViewGroup.LayoutParams.MATCH_PARENT
                                 , ViewGroup.LayoutParams.WRAP_CONTENT
@@ -281,51 +255,58 @@ public class SMT_Production_Start extends AppCompatActivity {
                         if (i % 2 == 1) {
                             selColor = Color.parseColor("#00D8FF");
                         }
-                        TextView textView = new TextView(SMT_Production_Start.this);
+                        TextView textView = new TextView(MMPS_All_Parts_Check_List.this);
                         textView.setText(String.valueOf(tableLayout.getChildCount()));
                         textView.setGravity(Gravity.CENTER);
                         textView.setBackgroundColor(selColor);
                         textView.setMinHeight(100);
                         tableRow.addView(textView);
-                        TextView textView2 = new TextView(SMT_Production_Start.this);
-                        textView2.setText(item.getString("Customer_Name"));
+                        TextView textView2 = new TextView(MMPS_All_Parts_Check_List.this);
+                        textView2.setText(item.getString("Machine_No"));
                         textView2.setGravity(Gravity.CENTER);
                         textView2.setBackgroundColor(selColor);
                         textView2.setMinHeight(100);
                         tableRow.addView(textView2);
-                        TextView textView3 = new TextView(SMT_Production_Start.this);
-                        textView3.setText(item.getString("Item_Code"));
+                        TextView textView3 = new TextView(MMPS_All_Parts_Check_List.this);
+                        textView3.setText(item.getString("Feeder_No"));
                         textView3.setGravity(Gravity.CENTER);
                         textView3.setBackgroundColor(selColor);
                         textView3.setMinHeight(100);
                         tableRow.addView(textView3);
-                        TextView textView4 = new TextView(SMT_Production_Start.this);
-                        textView4.setText(item.getString("Working_Count"));
+                        TextView textView4 = new TextView(MMPS_All_Parts_Check_List.this);
+                        textView4.setText("");
                         textView4.setGravity(Gravity.CENTER);
                         textView4.setBackgroundColor(selColor);
                         textView4.setMinHeight(100);
                         tableRow.addView(textView4);
 
                         //Tag에 Order Index를 넣어서 클릭할 때 표시
-                        tableRow.setTag(item.getString("Order_Index"));
+                        tableRow.setTag(tv_DeviceData.getText().toString() + "-" + item.getString("Machine_No"));
 
                         tableRow.setOnClickListener(new View.OnClickListener() {
                             public void onClick(View arg0) {
-                                //Log.e(TAG, "선택된 Po No.: " + tableRow.getTag().toString());
-                                Intent intent = new Intent(SMT_Production_Start.this, SMT_Production_Start_Check.class);
-                                intent.putExtra("Order Index", tableRow.getTag().toString());
-                                intent.putExtra("Department", spn_Department.getSelectedItem().toString());
-                                intent.putExtra("Work Line", spn_WorkLine.getSelectedItem().toString());
-                                startActivityForResult(intent, 0);
+                                Log.e(TAG, "선택된 Po No.: " + tableRow.getTag().toString());
+                                Intent intent = new Intent(MMPS_All_Parts_Check_List.this, All_Parts_Check.class);
+                                intent.putExtra("Device_Data", tableRow.getTag().toString());
+                                intent.putExtra("Order_Index", order_index);
+                                startActivityForResult(intent, 1);
                             }
                         });
                         tableLayout.addView(tableRow);
                     }
-                } else if (header.equals("Plan_List!")) {
-                    tableLayout.removeViews(1, tableLayout.getChildCount()-1);
-                    Toast.makeText(SMT_Production_Start.this, "해당 라인의 계획이 없습니다.", Toast.LENGTH_SHORT).show();
+                } else if (header.equals("insert")) {
+                    JSONArray jsonArray = jsonObject.getJSONArray("insert");
+                    JSONObject item = jsonArray.getJSONObject(0);
+                    if (!item.getString("Result").equals("Success")) {
+                        Toast.makeText(MMPS_All_Parts_Check_List.this, mJsonString, Toast.LENGTH_SHORT).show();
+                    } else {
+                        // 마지막 단계
+                        Intent resultIntent = new Intent();
+                        setResult(1, resultIntent);
+                        finish();
+                    }
                 } else {
-                    Toast.makeText(SMT_Production_Start.this, mJsonString, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MMPS_All_Parts_Check_List.this, mJsonString, Toast.LENGTH_SHORT).show();
                 }
             } catch (JSONException e) {
                 Log.d(TAG, "showResult Error : ", e);
@@ -335,18 +316,35 @@ public class SMT_Production_Start extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-        Log.d(TAG, "requestCode : " + requestCode);
-        if (requestCode == 49374) {
-            if (result != null) {
-                if (result.getContents() != null) {
-
+        //Log.e(TAG, "RequestCode : " + requestCode + ", ResultCode : " + resultCode);
+        if (requestCode == 1) {
+            // All Parts Check에서 온 Data
+            switch (resultCode) {
+                case 1:
+                    //정상 종료 되었을 경우.
+                    String checker = data.getStringExtra("Checker");
+                    String machine_no = data.getStringExtra("Machine_No");
+                    TableLayout tableView = (TableLayout) findViewById(R.id.tlList);
+                    View myTempView = null;
+                    int noOfChild = tableView.getChildCount();
+                    for (int i = 1; i < noOfChild; i++) {
+                        myTempView = tableView.getChildAt(i);
+                        View vv = ((TableRow) myTempView).getChildAt(1);
+                        if (vv instanceof TextView) {
+                            //Log.d(TAG, "현재 행 : " + ((TextView) vv).getText().toString());
+                            if (((TextView) vv).getText().toString().equals(machine_no)) {
+                                View vv2 = ((TableRow) myTempView).getChildAt(3);
+                                ((TextView) vv2).setText(checker); //체크표시
+                                break;
+                            }
+                        }
+                    }
+                    break;
                 }
-            } else {
-                super.onActivityResult(requestCode, resultCode, data);
             }
         }
-    }
 
     private void appVerAlarm() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -369,6 +367,5 @@ public class SMT_Production_Start extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         verCheck();
-        load_PlanList();
     }
 }
