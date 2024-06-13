@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".smt_production.MetalMask_Use_Registration"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    >
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@drawable/text_border_title"
+        android:gravity="center_vertical"
+        android:text="메탈마스크 사용등록"
+        android:textColor="#FFFF"
+        android:textSize="30sp"
+        android:textStyle="bold" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="10dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="9">
+
+            <TextView
+                android:id="@+id/tvInformation"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:background="@drawable/text_border_subtitle"
+                android:gravity="center_vertical"
+                android:text="[메탈마스크 정보]"
+                android:textColor="#FFFFFF"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="40sp"
+                android:layout_weight="0"
+                android:background="@drawable/text_border_white_back_color"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvCustomer"
+                    android:layout_width="120sp"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/text_border_blue"
+                    android:gravity="center"
+                    android:text="고객사"
+                    android:textColor="#FFFFFF"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/tv_Customer"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/text_border_lightblue"
+                    android:gravity="center"
+                    android:textSize="20sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="40sp"
+                android:layout_weight="0"
+                android:background="@drawable/text_border_white_back_color"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvModelCode"
+                    android:layout_width="120sp"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/text_border_blue"
+                    android:gravity="center"
+                    android:text="고객사"
+                    android:textColor="#FFFFFF"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/tv_ModelCode"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/text_border_lightblue"
+                    android:gravity="center"
+                    android:textSize="20sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="40sp"
+                android:background="@drawable/text_border_white_back_color"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvItemCode"
+                    android:layout_width="120sp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0"
+                    android:background="@drawable/text_border_blue"
+                    android:gravity="center"
+                    android:text="품번"
+                    android:textColor="#FFFFFF"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/tv_ItemCode"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/text_border_lightblue"
+                    android:gravity="center"
+                    android:textSize="20sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="40sp"
+                android:background="@drawable/text_border_white_back_color"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvItemName"
+                    android:layout_width="120sp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0"
+                    android:background="@drawable/text_border_blue"
+                    android:gravity="center"
+                    android:text="품명"
+                    android:textColor="#FFFFFF"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/tv_ItemName"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/text_border_lightblue"
+                    android:gravity="center"
+                    android:textSize="20sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="40sp"
+                android:layout_weight="0"
+                android:background="@drawable/text_border_white_back_color"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvWorkSide"
+                    android:layout_width="120dp"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/text_border_blue"
+                    android:gravity="center"
+                    android:text="작업면"
+                    android:textColor="#FFFFFF"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/tv_WorkSide"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/text_border_lightblue"
+                    android:gravity="center"
+                    android:textSize="20sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/text_border_white_back_color"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvStorageBox"
+                    android:layout_width="80dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/text_border_blue"
+                    android:gravity="center"
+                    android:text="보관함"
+                    android:textColor="#FFFFFF"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/tv_StorageBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:background="@drawable/text_border_lightblue"
+                    android:gravity="center"
+                    android:textSize="20sp"
+                    android:layout_weight="1"/>
+
+                <TextView
+                    android:id="@+id/tvStorageNo"
+                    android:layout_width="80dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/text_border_blue"
+                    android:gravity="center"
+                    android:text="번호"
+                    android:textColor="#FFFFFF"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/tv_StorageNo"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:background="@drawable/text_border_lightblue"
+                    android:gravity="center"
+                    android:textSize="20sp"
+                    android:layout_weight="1"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="40sp"
+                android:layout_weight="0"
+                android:background="@drawable/text_border_white_back_color"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvLoadMaskSN"
+                    android:layout_width="120dp"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/text_border_blue"
+                    android:gravity="center"
+                    android:text="Serial No."
+                    android:textColor="#FFFFFF"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/tv_LoadMaskSN"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/text_border_lightblue"
+                    android:gravity="center"
+                    android:textSize="20sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="40sp"
+                android:layout_weight="0"
+                android:background="@drawable/text_border_white_back_color"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvWorker"
+                    android:layout_width="120dp"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/text_border_blue"
+                    android:gravity="center"
+                    android:text="작업자"
+                    android:textColor="#FFFFFF"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/tv_Worker"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/text_border_lightblue"
+                    android:gravity="center"
+                    android:textSize="20sp" />
+            </LinearLayout>
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="10dp"
+                android:layout_weight="0" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvMaskSN"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:background="@drawable/text_border_subtitle"
+                    android:gravity="center_vertical"
+                    android:text="[메탈마스크 Serial No.]"
+                    android:textColor="#FFFFFF"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/etMaskSN"
+                    android:layout_width="match_parent"
+                    android:layout_height="50sp"
+                    android:background="@drawable/text_border_lightblue"
+                    android:gravity="center"
+                    android:textColor="#000000"
+                    android:textColorHint="#d9d9d9"
+                    android:hint="메탈마스크 Serial No.를 스캔하세요."
+                    android:textSize="20sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/btn_WorkingStart"
+            android:layout_width="match_parent"
+            android:layout_height="60sp"
+            android:text="사용등록"
+            android:textSize="25sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+</LinearLayout>

@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".smt_production.MetalMask_Used_Registration"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    >
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@drawable/text_border_title"
+        android:gravity="center_vertical"
+        android:text="메탈마스크 사용종료 등록"
+        android:textColor="#FFFF"
+        android:textSize="30dp"
+        android:textStyle="bold" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="10dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_weight="9">
+
+        <TextView
+            android:id="@+id/tvInformation"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:background="@drawable/text_border_subtitle"
+            android:gravity="center_vertical"
+            android:text="[메탈 마스크 사용정보]"
+            android:textColor="#FFFFFF"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40sp"
+            android:background="@drawable/text_border_lightblue"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvMaskSN"
+                android:layout_width="120sp"
+                android:layout_height="match_parent"
+                android:background="@drawable/text_border_blue"
+                android:gravity="center"
+                android:text="Mask Serial No."
+                android:textColor="#FFFFFF"
+                android:textSize="17sp" />
+
+            <TextView
+                android:id="@+id/tv_MaskSN"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/text_border_lightblue"
+                android:gravity="center"
+                android:textSize="20sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40sp"
+            android:background="@drawable/text_border_lightblue"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvUsingCount"
+                android:layout_width="120sp"
+                android:layout_height="match_parent"
+                android:background="@drawable/text_border_blue"
+                android:gravity="center"
+                android:text="사용횟수"
+                android:textColor="#FFFFFF"
+                android:textSize="20sp" />
+
+            <EditText
+                android:id="@+id/et_UsingCount"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="0"
+                android:background="@drawable/text_border_lightblue"
+                android:enabled="true"
+                android:inputType="number"
+                android:textAlignment="center"
+                android:textColorHint="#d9d9d9"
+                android:hint="사용 수량을 입력하세요"
+                android:cursorVisible="true"
+                android:selectAllOnFocus="true"
+                android:textSize="20sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40sp"
+            android:background="@drawable/text_border_lightblue"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvDailyCount"
+                android:layout_width="120sp"
+                android:layout_height="match_parent"
+                android:background="@drawable/text_border_blue"
+                android:gravity="center"
+                android:text="일 사용횟수"
+                android:textColor="#FFFFFF"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/tv_DailyCount"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/text_border_lightblue"
+                android:gravity="center"
+                android:textSize="20sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40sp"
+            android:background="@drawable/text_border_lightblue"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvTotalCount"
+                android:layout_width="120sp"
+                android:layout_height="match_parent"
+                android:background="@drawable/text_border_blue"
+                android:gravity="center"
+                android:text="총 사용횟수"
+                android:textColor="#FFFFFF"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/tv_TotalCount"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/text_border_lightblue"
+                android:gravity="center"
+                android:textSize="20sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40sp"
+            android:background="@drawable/text_border_lightblue"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvWorker"
+                android:layout_width="120dp"
+                android:layout_height="match_parent"
+                android:background="@drawable/text_border_blue"
+                android:gravity="center"
+                android:text="작업자"
+                android:textAlignment="center"
+                android:textColor="#FFFFFF"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/tv_Worker"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/text_border_lightblue"
+                android:gravity="center"
+                android:textSize="20sp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40sp"
+            android:background="@drawable/text_border_lightblue"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvCheck"
+                android:layout_width="120sp"
+                android:layout_height="match_parent"
+                android:background="@drawable/text_border_blue"
+                android:gravity="center"
+                android:text="마스크 검사결과"
+                android:textColor="#FFFFFF"
+                android:textSize="17sp" />
+
+            <EditText
+                android:id="@+id/et_Check"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/text_border_lightblue"
+                android:enabled="true"
+                android:inputType="text"
+                android:textAlignment="center"
+                android:textColorHint="#d9d9d9"
+                android:hint="검사결과를 입력하세요."
+                android:cursorVisible="true"
+                android:selectAllOnFocus="true"
+                android:textSize="20sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:background="@drawable/text_border_lightblue"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvWarningInfo"
+                android:layout_width="match_parent"
+                android:layout_height="32dp"
+                android:gravity="center"
+                android:text="최대 사용횟수를 초과하였습니다."
+                android:textAlignment="center"
+                android:textColor="@color/colorRed"
+                android:textSize="20sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/btnWorkingEnd"
+            android:layout_width="match_parent"
+            android:layout_height="60sp"
+            android:text="종료 등록"
+            android:textSize="25sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+</LinearLayout>

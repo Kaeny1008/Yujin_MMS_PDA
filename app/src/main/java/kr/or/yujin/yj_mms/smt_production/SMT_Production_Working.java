@@ -187,35 +187,16 @@ public class SMT_Production_Working extends AppCompatActivity {
         builder.setPositiveButton("예",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        long now = System.currentTimeMillis();
-                        Date date = new Date(now);
-                        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                        String nowTime = df.format(date);
-
-                        String strSQL;
-                        strSQL = "insert into tb_mms_smd_production_history(";
-                        strSQL += "order_index, smd_start_date, smd_operater, start_quantity, work_side, working_status";
-                        strSQL += ") values(";
-                        strSQL += "'" + tv_OrderIndex.getText().toString() + "'";
-                        strSQL += ",'" + nowTime + "'";
-                        strSQL += ",'" + et_Worker.getText().toString() + "'";
-                        strSQL += "," + 0 + "";
-                        strSQL += ",'" + tv_WorkSide.getText().toString() + "'";
-                        strSQL += ",'" + tv_WorkSide.getText().toString() + " Run'";
-                        strSQL += ");";
-                        //주문상태 변경
-                        strSQL += "update tb_mms_order_register_list set order_status = 'Production in SMD'";
-                        strSQL += " where order_index = '" + tv_OrderIndex.getText().toString() + "';";
-                        //생산계획 SMD시작일 등록
-                        strSQL += "update tb_mms_production_plan set smd_" + tv_WorkSide.getText().toString().toLowerCase() + "_start = '" + nowTime + "'";
-                        strSQL += ", smd_status = '" + tv_WorkSide.getText().toString() + " Run'";
-                        strSQL += " where order_index = '" + tv_OrderIndex.getText().toString() + "';";
-                        Log.e(TAG, "작업시작 전송 SQL : " + strSQL);
-                        GetData task = new GetData();
-                        task.execute( "http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/SMT_Production/Production_Start/save_work_start.php"
-                                , "Save_Work_Start"
-                                , strSQL
-                        );
+                        Intent intent = new Intent(SMT_Production_Working.this, MetalMask_Use_Registration.class);
+                        intent.putExtra("Customer_Name", tv_Customer.getText().toString());
+                        intent.putExtra("Item_Code", tv_ItemCode.getText().toString());
+                        intent.putExtra("Item_Name", tv_ItemName.getText().toString());
+                        intent.putExtra("Work_Side", tv_WorkSide.getText().toString());
+                        intent.putExtra("Worker", et_Worker.getText().toString());
+                        intent.putExtra("Model_Code", nowModelCode);
+                        intent.putExtra("Department", tv_Department.getText().toString());
+                        intent.putExtra("Work_Line", tv_WorkLine.getText().toString());
+                        startActivityForResult(intent, 2); //<-2
                     }
                 });
 
@@ -235,9 +216,41 @@ public class SMT_Production_Working extends AppCompatActivity {
         builder.show();
     }
 
+    private void start_DB_Write(){
+        long now = System.currentTimeMillis();
+        Date date = new Date(now);
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String nowTime = df.format(date);
+
+        String strSQL;
+        strSQL = "insert into tb_mms_smd_production_history(";
+        strSQL += "order_index, smd_start_date, smd_operater, start_quantity, work_side, working_status";
+        strSQL += ") values(";
+        strSQL += "'" + tv_OrderIndex.getText().toString() + "'";
+        strSQL += ",'" + nowTime + "'";
+        strSQL += ",'" + et_Worker.getText().toString() + "'";
+        strSQL += "," + 0 + "";
+        strSQL += ",'" + tv_WorkSide.getText().toString() + "'";
+        strSQL += ",'" + tv_WorkSide.getText().toString() + " Run'";
+        strSQL += ");";
+        //주문상태 변경
+        strSQL += "update tb_mms_order_register_list set order_status = 'Production in SMD'";
+        strSQL += " where order_index = '" + tv_OrderIndex.getText().toString() + "';";
+        //생산계획 SMD시작일 등록
+        strSQL += "update tb_mms_production_plan set smd_" + tv_WorkSide.getText().toString().toLowerCase() + "_start = '" + nowTime + "'";
+        strSQL += ", smd_status = '" + tv_WorkSide.getText().toString() + " Run'";
+        strSQL += " where order_index = '" + tv_OrderIndex.getText().toString() + "';";
+        Log.e(TAG, "작업시작 전송 SQL : " + strSQL);
+        GetData task = new GetData();
+        task.execute( "http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/SMT_Production/Production_Start/save_work_start.php"
+                , "Save_Work_Start"
+                , strSQL
+        );
+    }
+
     private void question_WorkEnd() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("작업시작");
+        builder.setTitle("작업종료");
         //타이틀설정
         String showText = "품번 : " + tv_ItemCode.getText().toString();
         showText += "\n품명 : " + tv_ItemName.getText().toString();
@@ -249,31 +262,14 @@ public class SMT_Production_Working extends AppCompatActivity {
         builder.setPositiveButton("예",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        long now = System.currentTimeMillis();
-                        Date date = new Date(now);
-                        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                        String nowTime = df.format(date);
-
-                        String strSQL;
-                        Boolean lastCompleted = true;
-                        if (getIntent().getStringExtra("Item_TB").equals("Bottom / Top")){
-                            if (tv_WorkSide.getText().toString().equals("Bottom")) {
-                                lastCompleted = false;
-                            }
-                        }
-                        String completedString = tv_WorkSide.getText().toString() + " Completed";
-                        if (lastCompleted) {
-                            completedString = "SMD Completed";
-                        }
-                        strSQL = "update tb_mms_production_plan set smd_" + tv_WorkSide.getText().toString().toLowerCase() + "_end = '" + nowTime + "'";
-                        strSQL += ", smd_status = '" + completedString + "'";
-                        strSQL += " where order_index = '" + tv_OrderIndex.getText().toString() + "';";
-                        Log.e(TAG, "작업종료 전송 SQL : " + strSQL);
-                        GetData task = new GetData();
-                        task.execute( "http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/SMT_Production/Production_Start/save_work_end.php"
-                                , "Save_Work_End"
-                                , strSQL
-                        );
+                        Intent intent = new Intent(SMT_Production_Working.this, MetalMask_Used_Registration.class);
+                        intent.putExtra("Model_Code", nowModelCode);
+                        intent.putExtra("Work_Side", tv_WorkSide.getText().toString());
+                        intent.putExtra("Worker", et_Worker.getText().toString());
+                        intent.putExtra("Department", tv_Department.getText().toString());
+                        intent.putExtra("Work_Line", tv_WorkLine.getText().toString());
+                        intent.putExtra("Order_Count", tv_OrderQty.getText().toString());
+                        startActivityForResult(intent, 3); //<- 3
                     }
                 });
 
@@ -291,6 +287,34 @@ public class SMT_Production_Working extends AppCompatActivity {
             }
         });
         builder.show();
+    }
+
+    private void end_DB_Write(){
+        long now = System.currentTimeMillis();
+        Date date = new Date(now);
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String nowTime = df.format(date);
+
+        String strSQL;
+        Boolean lastCompleted = true;
+        if (getIntent().getStringExtra("Item_TB").equals("Bottom / Top")){
+            if (tv_WorkSide.getText().toString().equals("Bottom")) {
+                lastCompleted = false;
+            }
+        }
+        String completedString = tv_WorkSide.getText().toString() + " Completed";
+        if (lastCompleted) {
+            completedString = "SMD Completed";
+        }
+        strSQL = "update tb_mms_production_plan set smd_" + tv_WorkSide.getText().toString().toLowerCase() + "_end = '" + nowTime + "'";
+        strSQL += ", smd_status = '" + completedString + "'";
+        strSQL += " where order_index = '" + tv_OrderIndex.getText().toString() + "';";
+        Log.e(TAG, "작업종료 전송 SQL : " + strSQL);
+        GetData task = new GetData();
+        task.execute( "http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/SMT_Production/Production_Start/save_work_end.php"
+                , "Save_Work_End"
+                , strSQL
+        );
     }
 
     private void notFind_DeviceData() {
@@ -330,6 +354,16 @@ public class SMT_Production_Working extends AppCompatActivity {
                     //정상 종료(체크) 되었을 경우.
                     enabled_All_Parts_Check();
                     break;
+            }
+        } else if (requestCode == 2) {
+            //MetalMask Use Registration에서 온 Data
+            if (resultCode == 1) {
+                start_DB_Write();
+            }
+        } else if (requestCode == 3) {
+            //MetalMask Used Registration에서 온 Data
+            if (resultCode == 1) {
+                end_DB_Write();
             }
         }
     }

@@ -26,6 +26,12 @@
         android:theme="@style/NoTitle"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".smt_production.MetalMask_Used_Registration"
+            android:exported="false" />
+        <activity
+            android:name=".smt_production.MetalMask_Use_Registration"
+            android:exported="false" />
+        <activity
             android:name=".mmps.MMPS_All_Parts_Check_List"
             android:exported="false" />
         <activity

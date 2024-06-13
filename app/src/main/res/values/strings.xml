@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">YJ MMS</string>
+    <string name="mask_use_over_warning">최대 사용한도 100,000회를 초과 하였습니다.\n마스크를 폐기하여 주십시오.</string>
+    <string name="mask_use_warning">최대 사용한도 100,000회에 근접합니다.\n담당자에게 확인하십시오.</string>
 </resources>
