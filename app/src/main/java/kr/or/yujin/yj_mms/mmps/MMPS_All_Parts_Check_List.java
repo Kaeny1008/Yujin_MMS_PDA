@@ -36,6 +36,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import kr.or.yujin.yj_mms.BuildConfig;
@@ -59,6 +61,8 @@ public class MMPS_All_Parts_Check_List extends AppCompatActivity {
     private long[] pattern1 = {100,100,100,100,100,100,100,100};
     private long[] pattern2 = {500,1000,500,1000};
 
+    private String firstCheck;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,6 +70,7 @@ public class MMPS_All_Parts_Check_List extends AppCompatActivity {
 
         control_Initialize();
 
+        firstCheck = getIntent().getStringExtra("First_Check");
         tv_DeviceData.setText(getIntent().getStringExtra("DD Main No"));
         order_index = getIntent().getStringExtra("Order_Index");
         GetData task = new GetData();
@@ -79,7 +84,13 @@ public class MMPS_All_Parts_Check_List extends AppCompatActivity {
             public void onClick(View v) {
                 if (allList_Check()) {
                     vibrator.vibrate(pattern1, -1); // miliSecond, 지정한 시간동안 진동
-                    String strSQL = "update tb_mms_order_register_list set smd_all_parts_check = 'Yes'";
+
+                    String colName = "smd_all_parts_check_bottom";
+                    if (getIntent().getStringExtra("Work_Side").equals("Top")) {
+                        colName = "smd_all_parts_check_top";
+                    }
+
+                    String strSQL = "update tb_mms_order_register_list set " + colName + " = 'Yes'";
                     strSQL += " where order_index = '" + order_index + "';";
 
                     GetData taskSave = new GetData();
@@ -289,6 +300,7 @@ public class MMPS_All_Parts_Check_List extends AppCompatActivity {
                                 Intent intent = new Intent(MMPS_All_Parts_Check_List.this, All_Parts_Check.class);
                                 intent.putExtra("Device_Data", tableRow.getTag().toString());
                                 intent.putExtra("Order_Index", order_index);
+                                intent.putExtra("Worker", getIntent().getStringExtra("Worker"));
                                 startActivityForResult(intent, 1);
                             }
                         });
@@ -345,6 +357,15 @@ public class MMPS_All_Parts_Check_List extends AppCompatActivity {
                 }
             }
         }
+
+    @Override
+    public void onBackPressed() {
+        if (firstCheck.equals("True")){
+            Toast.makeText(this, "뒤로가기 키는 사용할 수 없습니다.", Toast.LENGTH_SHORT).show();
+        } else {
+            super.onBackPressed();
+        }
+    }
 
     private void appVerAlarm() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);

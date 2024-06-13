@@ -64,8 +64,8 @@ public class SMT_Production_Start_Check extends AppCompatActivity {
         nowDepartment = getIntent().getStringExtra("Department");
         nowWorkLine = getIntent().getStringExtra("Work Line");
         GetData task = new GetData();
-        task.execute( "http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/SMT_Production/Production_Start/load_po_information.php"
-                , "Load Order Information"
+        task.execute( "http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/SMT_Production/Production_Start/load_order_information.php"
+                , "Load_Order_Information"
                 , getIntent().getStringExtra("Order Index")
         );
 
@@ -146,6 +146,8 @@ public class SMT_Production_Start_Check extends AppCompatActivity {
         intent.putExtra("Work Line", nowWorkLine);
         intent.putExtra("Work Side", workSide);
         intent.putExtra("Model Code", nowModelCode);
+        intent.putExtra("Order_Status", tv_OrderStatus.getText().toString());
+        intent.putExtra("Item_TB", tv_TopBottom.getText().toString());
         startActivityForResult(intent, 1);
     }
 
@@ -158,8 +160,15 @@ public class SMT_Production_Start_Check extends AppCompatActivity {
             // SMT Production Working에서 온 Data
             switch (resultCode) {
                 case 0:
-                case 1:
+                case 1: //자동 종료되어 온것이라면.
                     finish();
+                    break;
+                case 2: //작업이 종료되어 왔다.
+                    GetData task = new GetData();
+                    task.execute( "http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/SMT_Production/Production_Start/load_order_information.php"
+                            , "Load_Order_Information"
+                            , getIntent().getStringExtra("Order Index")
+                    );
                     break;
             }
         }
@@ -193,9 +202,9 @@ public class SMT_Production_Start_Check extends AppCompatActivity {
 
             if (secondString.equals("ver")) {
                 postParameters = "";
-            } else if (secondString.equals("Load Order Information")) {
+            } else if (secondString.equals("Load_Order_Information")) {
                 postParameters = "Order_Index=" + params[2];
-            } else if (secondString.equals("Load Work Side Information")) {
+            } else if (secondString.equals("Load_Work_Side_Information")) {
                 postParameters = "Model_Code=" + params[2];
             }
 
@@ -284,9 +293,14 @@ public class SMT_Production_Start_Check extends AppCompatActivity {
                     tv_OrderStatus.setText(item.getString("Order_Status"));
                     nowModelCode = item.getString("Model_Code");
 
+                    if (tv_OrderStatus.getText().toString().equals("SMD 작업완료")){
+                        finish();
+                        return;
+                    }
+
                     GetData task = new GetData();
                     task.execute( "http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/SMT_Production/Production_Start/load_work_side_information.php"
-                            , "Load Work Side Information"
+                            , "Load_Work_Side_Information"
                             , item.getString("Model_Code")
                     );
                 } else if (header.equals("Order_Information!")){

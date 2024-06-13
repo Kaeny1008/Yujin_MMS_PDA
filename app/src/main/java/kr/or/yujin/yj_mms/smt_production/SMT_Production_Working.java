@@ -34,6 +34,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import kr.or.yujin.yj_mms.BuildConfig;
@@ -41,6 +43,7 @@ import kr.or.yujin.yj_mms.MainActivity;
 import kr.or.yujin.yj_mms.R;
 import kr.or.yujin.yj_mms.mmps.All_Parts_Check;
 import kr.or.yujin.yj_mms.mmps.MMPS_All_Parts_Check_List;
+import kr.or.yujin.yj_mms.mmps.Parts_Change;
 
 public class SMT_Production_Working extends AppCompatActivity {
 
@@ -65,25 +68,81 @@ public class SMT_Production_Working extends AppCompatActivity {
         tv_ItemName.setText(getIntent().getStringExtra("Item Name"));
         tv_OrderQty.setText(getIntent().getStringExtra("Order Qty"));
         tv_WorkSide.setText(getIntent().getStringExtra("Work Side"));
-        //tv_DeviceData.setText(getIntent().getStringExtra("Order Index"));
         tv_Department.setText(getIntent().getStringExtra("Department"));
         tv_WorkLine.setText(getIntent().getStringExtra("Work Line"));
         nowModelCode = getIntent().getStringExtra("Model Code");
 
+        // Device Data DD Main No를 불러온다.
         GetData task = new GetData();
         task.execute( "http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/SMT_Production/Production_Start/load_device_data_no.php"
-                , "Load DD Main No"
+                , "Load_DD_Main_No"
                 , nowModelCode
+                , tv_WorkSide.getText().toString()
+        );
+
+        GetData task2 = new GetData();
+        task2.execute( "http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/SMT_Production/Production_Start/load_smd_operator.php"
+                , "Load_Operator"
+                , tv_OrderIndex.getText().toString()
                 , tv_WorkSide.getText().toString()
         );
 
         btnAllPartsCheck.setOnClickListener((new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (et_Worker.getText().toString().equals("")){
+                    Toast.makeText(SMT_Production_Working.this, "작업자를 먼저 입력하여 주십시오.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 Intent intent = new Intent(SMT_Production_Working.this, MMPS_All_Parts_Check_List.class);
                 intent.putExtra("DD Main No", tv_DeviceData.getText().toString());
                 intent.putExtra("Order_Index", tv_OrderIndex.getText().toString());
+                intent.putExtra("Worker", et_Worker.getText().toString());
+                intent.putExtra("Work_Side", tv_WorkSide.getText().toString());
+                if (cb_AllPartsCheck.isChecked()){
+                    //Check가 되어 있지 않으므로 뒤로가기키를 누를수 없도록 변경
+                    intent.putExtra("First_Check", "False");
+                } else {
+                    intent.putExtra("First_Check", "True");
+                }
                 startActivityForResult(intent, 1);
+            }
+        }));
+
+        btnPartsChange.setOnClickListener((new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (et_Worker.getText().toString().equals("")){
+                    Toast.makeText(SMT_Production_Working.this, "작업자를 먼저 입력하여 주십시오.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                Intent intent = new Intent(SMT_Production_Working.this, Parts_Change.class);
+                intent.putExtra("DD_Main_No", tv_DeviceData.getText().toString());
+                intent.putExtra("Order_Index", tv_OrderIndex.getText().toString());
+                intent.putExtra("Worker", et_Worker.getText().toString());
+                startActivityForResult(intent, 2);
+            }
+        }));
+
+        btnWorkingStart.setOnClickListener((new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (et_Worker.getText().toString().equals("")){
+                    Toast.makeText(SMT_Production_Working.this, "작업자를 먼저 입력하여 주십시오.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                question_WorkStart();
+            }
+        }));
+
+        btnWorkingEnd.setOnClickListener((new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (et_Worker.getText().toString().equals("")){
+                    Toast.makeText(SMT_Production_Working.this, "작업자를 먼저 입력하여 주십시오.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                question_WorkEnd();
             }
         }));
     }
@@ -114,7 +173,127 @@ public class SMT_Production_Working extends AppCompatActivity {
         cb_AllPartsCheck.setEnabled(false);
     }
 
-    public void notFind_DeviceData() {
+    private void question_WorkStart() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("작업시작");
+        //타이틀설정
+        String showText = "품번 : " + tv_ItemCode.getText().toString();
+        showText += "\n품명 : " + tv_ItemName.getText().toString();
+        showText += "\n작업면 : " + tv_WorkSide.getText().toString();
+        showText += "\n\n생산시작 등록을 하시겠습니까?";
+        builder.setMessage(showText);
+        builder.setCancelable(false); // 뒤로가기로 취소
+        //내용설정
+        builder.setPositiveButton("예",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        long now = System.currentTimeMillis();
+                        Date date = new Date(now);
+                        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                        String nowTime = df.format(date);
+
+                        String strSQL;
+                        strSQL = "insert into tb_mms_smd_production_history(";
+                        strSQL += "order_index, smd_start_date, smd_operater, start_quantity, work_side, working_status";
+                        strSQL += ") values(";
+                        strSQL += "'" + tv_OrderIndex.getText().toString() + "'";
+                        strSQL += ",'" + nowTime + "'";
+                        strSQL += ",'" + et_Worker.getText().toString() + "'";
+                        strSQL += "," + 0 + "";
+                        strSQL += ",'" + tv_WorkSide.getText().toString() + "'";
+                        strSQL += ",'" + tv_WorkSide.getText().toString() + " Run'";
+                        strSQL += ");";
+                        //주문상태 변경
+                        strSQL += "update tb_mms_order_register_list set order_status = 'Production in SMD'";
+                        strSQL += " where order_index = '" + tv_OrderIndex.getText().toString() + "';";
+                        //생산계획 SMD시작일 등록
+                        strSQL += "update tb_mms_production_plan set smd_" + tv_WorkSide.getText().toString().toLowerCase() + "_start = '" + nowTime + "'";
+                        strSQL += ", smd_status = '" + tv_WorkSide.getText().toString() + " Run'";
+                        strSQL += " where order_index = '" + tv_OrderIndex.getText().toString() + "';";
+                        Log.e(TAG, "작업시작 전송 SQL : " + strSQL);
+                        GetData task = new GetData();
+                        task.execute( "http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/SMT_Production/Production_Start/save_work_start.php"
+                                , "Save_Work_Start"
+                                , strSQL
+                        );
+                    }
+                });
+
+        builder.setNegativeButton("아니오",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+
+        builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+
+            }
+        });
+        builder.show();
+    }
+
+    private void question_WorkEnd() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("작업시작");
+        //타이틀설정
+        String showText = "품번 : " + tv_ItemCode.getText().toString();
+        showText += "\n품명 : " + tv_ItemName.getText().toString();
+        showText += "\n작업면 : " + tv_WorkSide.getText().toString();
+        showText += "\n\n생산종료 등록을 하시겠습니까?";
+        builder.setMessage(showText);
+        builder.setCancelable(false); // 뒤로가기로 취소
+        //내용설정
+        builder.setPositiveButton("예",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        long now = System.currentTimeMillis();
+                        Date date = new Date(now);
+                        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                        String nowTime = df.format(date);
+
+                        String strSQL;
+                        Boolean lastCompleted = true;
+                        if (getIntent().getStringExtra("Item_TB").equals("Bottom / Top")){
+                            if (tv_WorkSide.getText().toString().equals("Bottom")) {
+                                lastCompleted = false;
+                            }
+                        }
+                        String completedString = tv_WorkSide.getText().toString() + " Completed";
+                        if (lastCompleted) {
+                            completedString = "SMD Completed";
+                        }
+                        strSQL = "update tb_mms_production_plan set smd_" + tv_WorkSide.getText().toString().toLowerCase() + "_end = '" + nowTime + "'";
+                        strSQL += ", smd_status = '" + completedString + "'";
+                        strSQL += " where order_index = '" + tv_OrderIndex.getText().toString() + "';";
+                        Log.e(TAG, "작업종료 전송 SQL : " + strSQL);
+                        GetData task = new GetData();
+                        task.execute( "http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/SMT_Production/Production_Start/save_work_end.php"
+                                , "Save_Work_End"
+                                , strSQL
+                        );
+                    }
+                });
+
+        builder.setNegativeButton("아니오",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+
+        builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+
+            }
+        });
+        builder.show();
+    }
+
+    private void notFind_DeviceData() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("오삽방지 시스템");
         //타이틀설정
@@ -158,8 +337,16 @@ public class SMT_Production_Working extends AppCompatActivity {
     private void enabled_All_Parts_Check(){
         cb_AllPartsCheck.setChecked(true);
         btnAllPartsCheck.setEnabled(true);
-        btnPartsChange.setEnabled(true);
-        btnWorkingStart.setEnabled(true);
+
+        if (getIntent().getStringExtra("Order_Status").contains("작업중")){
+            btnWorkingStart.setEnabled(false);
+            btnWorkingEnd.setEnabled(true);
+            btnPartsChange.setEnabled(true);
+        } else {
+            btnWorkingStart.setEnabled(true);
+            btnWorkingEnd.setEnabled(false);
+            btnPartsChange.setEnabled(false);
+        }
     }
 
     private class GetData extends AsyncTask<String, Void, String> {
@@ -190,12 +377,19 @@ public class SMT_Production_Working extends AppCompatActivity {
 
             if (secondString.equals("ver")) {
                 postParameters = "";
-            } else if (secondString.equals("Load DD Main No")) {
+            } else if (secondString.equals("Load_DD_Main_No")) {
                 postParameters = "Model_Code=" + params[2];
                 postParameters += "&Work_Side=" + params[3];
-            } else if (secondString.equals("Load All Parts Check Result")) {
+            } else if (secondString.equals("Load_All_Parts_Check_Result")) {
                 postParameters = "Order_Index=" + params[2];
                 postParameters += "&DD_Main_No=" + params[3];
+            } else if (secondString.equals("Load_Operator")) {
+                postParameters = "Order_Index=" + params[2];
+                postParameters += "&Work_Side=" + params[3];
+            } else if (secondString.equals("Save_Work_Start")) {
+                postParameters = "sql=" + params[2];
+            } else if (secondString.equals("Save_Work_End")) {
+                postParameters = "sql=" + params[2];
             }
 
             try {
@@ -277,9 +471,13 @@ public class SMT_Production_Working extends AppCompatActivity {
                     JSONObject item = jsonArray.getJSONObject(0);
                     tv_DeviceData.setText(item.getString("DD_Main_No"));
 
+                    String phpDocumentName = "load_all_parts_check_bottom_result.php";
+                    if (tv_WorkSide.getText().toString().equals("Top")){
+                        phpDocumentName = "load_all_parts_check_top_result.php";
+                    }
                     GetData task = new GetData();
-                    task.execute( "http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/SMT_Production/Production_Start/load_all_parts_check_result.php"
-                            , "Load All Parts Check Result"
+                    task.execute( "http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/SMT_Production/Production_Start/" + phpDocumentName
+                            , "Load_All_Parts_Check_Result"
                             , tv_OrderIndex.getText().toString()
                             , tv_DeviceData.getText().toString()
                     );
@@ -288,7 +486,7 @@ public class SMT_Production_Working extends AppCompatActivity {
                 } else if (header.equals("Load_All_Parts_Check_Result")) {
                     JSONArray jsonArray = jsonObject.getJSONArray("Load_All_Parts_Check_Result");
                     JSONObject item = jsonArray.getJSONObject(0);
-                    if (item.getString("Check_Result").equals("No")){
+                    if (item.getString("Check_Result").equals("No")) {
                         // All Parts Check가 진행 되지 않았으므로 All Parts Check로 넘어간다.
                         Toast.makeText(SMT_Production_Working.this, "All Parts Check를 먼저 진행하여 주십시오.", Toast.LENGTH_LONG).show();
                         btnAllPartsCheck.setEnabled(true);
@@ -298,6 +496,31 @@ public class SMT_Production_Working extends AppCompatActivity {
                         cb_AllPartsCheck.setChecked(false);
                     } else {
                         enabled_All_Parts_Check();
+                    }
+                } else if (header.equals("Load_Operator")){
+                    JSONArray jsonArray = jsonObject.getJSONArray("Load_Operator");
+                    JSONObject item = jsonArray.getJSONObject(0);
+                    et_Worker.setText(item.getString("SMD_Operator"));
+                } else if (header.equals("Load_Operator!")){
+                } else if (header.equals("Save_Work_Start")){
+                    JSONArray jsonArray = jsonObject.getJSONArray("Save_Work_Start");
+                    JSONObject item = jsonArray.getJSONObject(0);
+                    if (!item.getString("Result").equals("Success")){
+                        Toast.makeText(SMT_Production_Working.this, mJsonString, Toast.LENGTH_SHORT).show();
+                    } else {
+                        btnWorkingEnd.setEnabled(true);
+                        btnWorkingStart.setEnabled(false);
+                        btnPartsChange.setEnabled(true);
+                    }
+                } else if (header.equals("Save_Work_End")){
+                    JSONArray jsonArray = jsonObject.getJSONArray("Save_Work_End");
+                    JSONObject item = jsonArray.getJSONObject(0);
+                    if (!item.getString("Result").equals("Success")){
+                        Toast.makeText(SMT_Production_Working.this, mJsonString, Toast.LENGTH_SHORT).show();
+                    } else {
+                        Intent resultIntent = new Intent();
+                        setResult(2, resultIntent); //resultCode :2 <- 작업이 종료되었다.
+                        finish();
                     }
                 } else {
                     Toast.makeText(SMT_Production_Working.this, mJsonString, Toast.LENGTH_SHORT).show();

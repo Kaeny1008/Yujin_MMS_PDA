@@ -41,6 +41,7 @@ import kr.or.yujin.yj_mms.common.ForecdTerminationService;
 import kr.or.yujin.yj_mms.mmng.MMNG_Main;
 import kr.or.yujin.yj_mms.mmps.MMPS_Main;
 import kr.or.yujin.yj_mms.smt_production.SMT_Production_Main;
+import kr.or.yujin.yj_mms.smt_production.SMT_Production_Start;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -115,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (smt_Form == false){
                     smt_Form = true;
-                    Intent intent = new Intent(MainActivity.this, SMT_Production_Main.class);
+                    Intent intent = new Intent(MainActivity.this, SMT_Production_Start.class);
                     startActivity(intent);//액티비티 띄우기
                 } else {
                     Log.d(activityTag, "SMT 생산 페이지가 열려있다.");

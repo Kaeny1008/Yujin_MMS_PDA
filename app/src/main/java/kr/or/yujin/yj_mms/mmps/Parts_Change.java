@@ -88,18 +88,19 @@ public class Parts_Change extends AppCompatActivity {
 
     private Vibrator vibrator;
 
+    private String order_index;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.mmps_parts_change_new);
+        setContentView(R.layout.mmps_parts_change);
 
         vibrator = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
 
-        //server_ip = MMPS_Main.server_ip;
-        //server_port = MMPS_Main.server_port;
-
-        etInit();
-        tvInit();
+        control_Initialize();
+        etMainDDCode.setText(getIntent().getStringExtra("DD_Main_No"));
+        order_index = getIntent().getStringExtra("Order_Index");
+        etWorker.setText(getIntent().getStringExtra("Worker"));
 
         mContext = this;
         mScanner = new ScanManager();
@@ -131,24 +132,6 @@ public class Parts_Change extends AppCompatActivity {
                 mScanner.aDecodeSymSetLocalPropEnable(symID, propIndex, 1);
             }
         }
-
-        //데이터 준비
-        befMakerList = new ArrayList<String>();
-        aftMakerList = new ArrayList<String>();
-
-        // 어댑터 생성
-        befMakerListADT = new ArrayAdapter<String>(this,
-                R.layout.support_simple_spinner_dropdown_item, befMakerList);
-        aftMakerListADT = new ArrayAdapter<String>(this,
-                R.layout.support_simple_spinner_dropdown_item, aftMakerList);
-
-        // 어댑터 설정
-        spnBefMaker = (Spinner) findViewById(R.id.spnBefMaker);
-        spnBefMaker.setAdapter(befMakerListADT);
-        spnAftMaker = (Spinner) findViewById(R.id.spnAftMaker);
-        spnAftMaker.setAdapter(aftMakerListADT);
-
-        tvStatus.setText("작업자를 입력하여 주십시오.");
 
         // 체크코드 생성 시작(나중에 수정해야 한다. 데이터를 저장 하기전에 체크코드를 체크한다음 바로 데이터를 저장해야 한다.
         // 미리 체크코드 생성하면 중복으로 저장 가능성이 있다.
@@ -185,8 +168,8 @@ public class Parts_Change extends AppCompatActivity {
         tvMainDDCode.setOnClickListener((new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                etMainDDCode.setText("");
-                tvStatus.setText("작업지시번호를 스캔하여 주십시오.");
+                //etMainDDCode.setText("");
+                //tvStatus.setText("작업지시번호를 스캔하여 주십시오.");
             }
         }));
 
@@ -250,6 +233,48 @@ public class Parts_Change extends AppCompatActivity {
                 tvStatus.setText("교환 후 자재의 제조사를 선택 후 자재 정보를 입력하여 주십시오.");
             }
         }));
+    }
+
+    private void control_Initialize(){
+        etWorker = (EditText) findViewById(R.id.etWorker);
+        etMainDDCode = (EditText) findViewById(R.id.etMainDDCode);
+        etMainPartNo = (EditText) findViewById(R.id.etMainPartNo);
+        etFeederSN = (EditText) findViewById(R.id.etFeederSN);
+        etBefPartCode = (EditText) findViewById(R.id.etBefPartCode);
+        etAftPartCode = (EditText) findViewById(R.id.etAftPartCode);
+        etAftPartNo = (EditText) findViewById(R.id.etAftPartNo);
+        etAftLotNo = (EditText) findViewById(R.id.etAftLotNo);
+        etAftQty = (EditText) findViewById(R.id.etAftQty);
+
+        tvMainDDCode = (TextView) findViewById(R.id.tvMainDDCode);
+        tvWorker = (TextView) findViewById(R.id.tvWorker);
+        tvFeederSN = (TextView) findViewById(R.id.tvFeederSN);
+        tvBefPartCode = (TextView) findViewById(R.id.tvBefPartCode);
+        tvAftPartCode = (TextView) findViewById(R.id.tvAftPartCode);
+        tvAftPartNo = (TextView) findViewById(R.id.tvAftPartNo);
+        tvAftLotNo = (TextView) findViewById(R.id.tvAftLotNo);
+        tvAftQty = (TextView) findViewById(R.id.tvAftQty);
+        tvStatus = (TextView) findViewById(R.id.tvStatus);
+
+        noQtyAuto = (CheckBox) findViewById(R.id.noQTYAuto);
+
+        //데이터 준비
+        befMakerList = new ArrayList<String>();
+        aftMakerList = new ArrayList<String>();
+
+        // 어댑터 생성
+        befMakerListADT = new ArrayAdapter<String>(this,
+                R.layout.support_simple_spinner_dropdown_item, befMakerList);
+        aftMakerListADT = new ArrayAdapter<String>(this,
+                R.layout.support_simple_spinner_dropdown_item, aftMakerList);
+
+        // 어댑터 설정
+        spnBefMaker = (Spinner) findViewById(R.id.spnBefMaker);
+        spnBefMaker.setAdapter(befMakerListADT);
+        spnAftMaker = (Spinner) findViewById(R.id.spnAftMaker);
+        spnAftMaker.setAdapter(aftMakerListADT);
+
+        tvStatus.setText("Feeder Serial No.를 스캔하여 주십시오.");
     }
 
     private void actionWrite() {
@@ -436,6 +461,7 @@ public class Parts_Change extends AppCompatActivity {
         insertText += ", ng_result = '" + resultReason + "'";
         insertText += ", check_date = '" + getTime + "'";
         insertText += ", worker = '" + etWorker.getText().toString() + "'";
+        insertText += ", order_index = '" + order_index + "'";
         insertText += " where check_code = '" + checkCode + "';";
 
         Log.d(TAG, "Parts Change Result : " + insertText);
@@ -528,7 +554,7 @@ public class Parts_Change extends AppCompatActivity {
                             // 110404167!WR04X1202FTL!20240502001!10000!WALSIN
                             String[] splitBarcode = mDecodeResult.toString().split("!");
 
-                            if (splitBarcode.length != 5) {
+                            if (splitBarcode.length < 5) {
                                 Toast.makeText(Parts_Change.this, "유진발행 또는 공급사 부착 라벨을 스캔하여 주십시오.", Toast.LENGTH_SHORT).show();
                             } else {
                                 etAftPartCode.setText(splitBarcode[0]);
@@ -688,32 +714,6 @@ public class Parts_Change extends AppCompatActivity {
         getData task = new getData();
         task.execute("http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/MMPS_V2/PartsChange/codemaking.php", "codeFind"
                 , getDate);
-    }
-
-    private void etInit(){
-        etWorker = (EditText) findViewById(R.id.etWorker);
-        etMainDDCode = (EditText) findViewById(R.id.etMainDDCode);
-        etMainPartNo = (EditText) findViewById(R.id.etMainPartNo);
-        etFeederSN = (EditText) findViewById(R.id.etFeederSN);
-        etBefPartCode = (EditText) findViewById(R.id.etBefPartCode);
-        etAftPartCode = (EditText) findViewById(R.id.etAftPartCode);
-        etAftPartNo = (EditText) findViewById(R.id.etAftPartNo);
-        etAftLotNo = (EditText) findViewById(R.id.etAftLotNo);
-        etAftQty = (EditText) findViewById(R.id.etAftQty);
-    }
-
-    private void tvInit(){
-        tvMainDDCode = (TextView) findViewById(R.id.tvMainDDCode);
-        tvWorker = (TextView) findViewById(R.id.tvWorker);
-        tvFeederSN = (TextView) findViewById(R.id.tvFeederSN);
-        tvBefPartCode = (TextView) findViewById(R.id.tvBefPartCode);
-        tvAftPartCode = (TextView) findViewById(R.id.tvAftPartCode);
-        tvAftPartNo = (TextView) findViewById(R.id.tvAftPartNo);
-        tvAftLotNo = (TextView) findViewById(R.id.tvAftLotNo);
-        tvAftQty = (TextView) findViewById(R.id.tvAftQty);
-        tvStatus = (TextView) findViewById(R.id.tvStatus);
-
-        noQtyAuto = (CheckBox) findViewById(R.id.noQTYAuto);
     }
 
     private class getData extends AsyncTask<String, Void, String> {
@@ -941,8 +941,8 @@ public class Parts_Change extends AppCompatActivity {
 
                     //자재 제조사가 2개 이상일 경우 알림 진동
                     if (befMakerListADT.getCount() > 1) {
-                        long[] pattern = {500,100,500,100,500};
-                        vibrator.vibrate(pattern, -1); // miliSecond, 지정한 시간동안 진동
+                        //long[] pattern = {500,100,500,100,500};
+                        //vibrator.vibrate(pattern, -1); // miliSecond, 지정한 시간동안 진동
                     }
                     Log.d(TAG, "Original Part No : " + orgPartNo);
                 } else if (header.equals("saveResult")) {

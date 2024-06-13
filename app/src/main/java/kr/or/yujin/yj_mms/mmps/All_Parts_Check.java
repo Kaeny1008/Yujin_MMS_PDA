@@ -106,6 +106,8 @@ public class All_Parts_Check extends AppCompatActivity {
 
         control_Initialize();
 
+        etWorker.setText(getIntent().getStringExtra("Worker"));
+
         mContext = this;
         mScanner = new ScanManager();
         mDecodeResult = new DecodeResult();
@@ -1240,13 +1242,13 @@ public class All_Parts_Check extends AppCompatActivity {
             }
         }
         // if (orgPartNo.indexOf(etPartCode.getText().toString()) > -1){ // 정상교환이라면 (Part No List중에 포함이 되어 있다면)
-        if (partExist == true){ // 정상교환이라면 (Part No List중에 포함이 되어 있다면)
+        if (partExist){ // 정상교환이라면 (Part No List중에 포함이 되어 있다면)
             insertText += ",'OK'";
             insertText += ",''";
             insertText += ",'" + "" + "'";
             insertText += ",'" + getTime + "');";
 
-            if (noFeeder.isChecked() == false){
+            if (!noFeeder.isChecked()){
                 // 신규 FeederSN을 전송
                 insertText += "update tb_mmps_device_data set feeder_sn = '" + etFeederSN.getText().toString() + "'";
                 insertText += ", feeder_date = '" + getTime + "'";
@@ -1263,10 +1265,11 @@ public class All_Parts_Check extends AppCompatActivity {
 
         // Parts Change 기록만으로는 처음 부착된 자재의 이력을 알 수 없으므로
         // Parts Change에 All Parts Check의 데이터를 기록한다.
-        if (noFeeder.isChecked() == false){
+        if (!noFeeder.isChecked()){
             firstChangeText = "insert into tb_mmps_history_check(";
             firstChangeText += "check_code, factory_name, model_name, customer_name, work_line, work_side, dd_main_no, machine_no, feeder_no";
-            firstChangeText += ", org_part_code, bef_part_code, chg_part_code, chg_part_no, chg_lot_no, chg_qty, chg_result, ng_check_id, ng_result, check_date, worker";
+            firstChangeText += ", org_part_code, bef_part_code, chg_part_code, chg_part_no, chg_lot_no, chg_qty, chg_result";
+            firstChangeText += ", ng_check_id, ng_result, check_date, worker, order_index";
             firstChangeText += ") values(";
             firstChangeText += "'" + checkCode + "'";
             firstChangeText += ",'" + factoryName + "'";
@@ -1283,19 +1286,19 @@ public class All_Parts_Check extends AppCompatActivity {
             firstChangeText += ",'" + etPartNo.getText().toString() + "'";
             firstChangeText += ",'" + etLotNo.getText().toString() + "'";
             firstChangeText += ",'" + etQty.getText().toString() + "'";
-            if (orgPartNo.indexOf(etPartCode.getText().toString()) > -1){ // 정상교환이라면 (Part No List중에 포함이 되어 있다면)
+            if (orgPartNo.contains(etPartCode.getText().toString())){ // 정상교환이라면 (Part No List중에 포함이 되어 있다면)
                 firstChangeText += ",'OK'";
                 firstChangeText += ",''";
                 firstChangeText += ",''";
-                firstChangeText += ",'" + getTime + "'";
-                firstChangeText += ",'" + etWorker.getText().toString() + "');";
             } else { // 오삽이라면
                 firstChangeText += ",'NG2'";
                 firstChangeText += ",'" + ngCheckID + "'";
                 firstChangeText += ",'" + ngReasonString + "'";
-                firstChangeText += ",'" + getTime + "'";
-                firstChangeText += ",'" + etWorker.getText().toString() + "');";
             }
+            firstChangeText += ",'" + getTime + "'";
+            firstChangeText += ",'" + etWorker.getText().toString() + "'";
+            firstChangeText += ",'" + order_index + "'";
+            firstChangeText += ");";
         }
 
         //서버로 전송한다.

@@ -335,16 +335,11 @@ public class SMT_Production_Start extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-        Log.d(TAG, "requestCode : " + requestCode);
-        if (requestCode == 49374) {
-            if (result != null) {
-                if (result.getContents() != null) {
+        //Log.d(TAG, "requestCode : " + requestCode);
+        if (requestCode == 0) {
 
-                }
-            } else {
-                super.onActivityResult(requestCode, resultCode, data);
-            }
         }
     }
 
@@ -363,6 +358,13 @@ public class SMT_Production_Start extends AppCompatActivity {
                     }
                 });
         builder.show();
+    }
+
+    @Override
+    protected void onDestroy() {
+        //엑티비티가 종료되었다는걸 메인엑티비티에게 전달
+        MainActivity.smt_Form = false;
+        super.onDestroy();
     }
 
     @Override
