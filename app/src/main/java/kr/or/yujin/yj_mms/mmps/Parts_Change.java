@@ -65,7 +65,7 @@ public class Parts_Change extends AppCompatActivity {
     private ArrayAdapter<String> befMakerListADT, aftMakerListADT; // 스피너에 사용되는 ArrayAdapter
 
     private String checkCode;
-    private String orgPartNo, factoryName, lineName, workSide, modelName, customerName, machineNo, feederNo;
+    private String orgPartNo, factoryName, lineName, workSide, modelName, customerName, machineNo, feederNo, customerCode;
 
     //Server 접속주소
     //private static String MainActivity.server_ip = MMPS_Main.server_ip;
@@ -563,17 +563,14 @@ public class Parts_Change extends AppCompatActivity {
                                 etAftQty.setText((splitBarcode[3]));
                             }
 
-                            // 모든정보가 입력이 되었다면 결과를 확인 한다.
-                            // 자재 정보가 비워 있지 않다면.
-                            if (etAftPartCode.length() != 0 &&
-                                    etAftLotNo.length() != 0 &&
-                                    etAftQty.length() != 0 &&
-                                    etBefPartCode.length() != 0) {
-
-                                // 결과를 확인 한다.
-                                actionWrite();
-                                //tvStatus.setText("확인 버튼을 눌러 주십시오.");
-                            }
+                            //현장 출고가 된 자재인지 검증한다. ######
+                            getData task = new getData();
+                            task.execute("http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/MMPS_V2/PartsChange/parts_status_check.php"
+                                    , "RankCheck"
+                                    , customerCode
+                                    , etAftPartCode.getText().toString()
+                                    , etAftLotNo.getText().toString()
+                            );
                         } else {
                             // 프로세스 변경으로 현재 사용하지 않음.
                             /*
@@ -758,6 +755,10 @@ public class Parts_Change extends AppCompatActivity {
             } else if (secondString.equals("BarcodeSplit")) {
                 postParameters = "barcode=" + params[3];
                 postParameters += "&maker=" + params[2];
+            } else if (secondString.equals("RankCheck")) {
+                postParameters = "Customer_Code=" + params[2];
+                postParameters += "&Part_Code=" + params[3];
+                postParameters += "&Lot_No=" + params[4];
             } else if (secondString.equals("ver")) {
                 postParameters = "";
             }
@@ -876,6 +877,7 @@ public class Parts_Change extends AppCompatActivity {
                     workSide = item.getString("WORK_SIDE");
                     modelName = item.getString("MODEL_NAME");
                     customerName = item.getString("CUSTOMER_NAME");
+                    customerCode = item.getString("CUSTOMER_Code");
                     machineNo = item.getString("MACHINE_NO");
                     feederNo = item.getString("FEEDER_NO");
 
@@ -1027,13 +1029,13 @@ public class Parts_Change extends AppCompatActivity {
                                 if (!nowORG.equals("")) {
                                     etAftPartCode.setText(nowORG);
                                 } else {
-                                    if (etAftPartCode.getText().toString().equals("")){
+                                    if (etAftPartCode.getText().toString().equals("")) {
                                         etAftPartCode.setText(nowPartNo);
                                     }
                                     if (etAftLotNo.getText().toString().equals("")) {
                                         etAftLotNo.setText(nowLotNo);
                                     }
-                                    if (noQtyAuto.isChecked() == false){
+                                    if (noQtyAuto.isChecked() == false) {
                                         etAftQty.setText(nowQty);
                                     }
                                 }
@@ -1054,13 +1056,13 @@ public class Parts_Change extends AppCompatActivity {
                                 if (!nowORG.equals("")) {
                                     etAftLotNo.setText(nowORG);
                                 } else {
-                                    if (etAftPartCode.getText().toString().equals("")){
+                                    if (etAftPartCode.getText().toString().equals("")) {
                                         etAftPartCode.setText(nowPartNo);
                                     }
                                     if (etAftLotNo.getText().toString().equals("")) {
                                         etAftLotNo.setText(nowLotNo);
                                     }
-                                    if (noQtyAuto.isChecked() == false){
+                                    if (noQtyAuto.isChecked() == false) {
                                         etAftQty.setText(nowQty);
                                     }
                                 }
@@ -1082,13 +1084,13 @@ public class Parts_Change extends AppCompatActivity {
                                 if (!nowORG.equals("")) {
                                     etAftQty.setText(nowORG);
                                 } else {
-                                    if (etAftPartCode.getText().toString().equals("")){
+                                    if (etAftPartCode.getText().toString().equals("")) {
                                         etAftPartCode.setText(nowPartNo);
                                     }
                                     if (etAftLotNo.getText().toString().equals("")) {
                                         etAftLotNo.setText(nowLotNo);
                                     }
-                                    if (noQtyAuto.isChecked() == false){
+                                    if (noQtyAuto.isChecked() == false) {
                                         etAftQty.setText(nowQty);
                                     }
                                 }
@@ -1106,9 +1108,40 @@ public class Parts_Change extends AppCompatActivity {
                                 }
                             }
                         }
-                    }  catch(Exception e){
+                    } catch (Exception e) {
                         Log.d(TAG, "PHP에서 돌아온 바코드 정보를 확인 중 오류 발생", e);
                     }
+                } else if (header.equals("RankCheck")) {
+                    JSONArray jsonArray = jsonObject.getJSONArray("RankCheck");
+                    JSONObject item = jsonArray.getJSONObject(0);
+                    if (item.getString("Part_Status").equals("Run")) {
+                        // 모든정보가 입력이 되었다면 결과를 확인 한다.
+                        // 자재 정보가 비워 있지 않다면.
+                        if (etAftPartCode.length() != 0 &&
+                                etAftLotNo.length() != 0 &&
+                                etAftQty.length() != 0 &&
+                                etBefPartCode.length() != 0) {
+
+                            // 결과를 확인 한다.
+                            actionWrite();
+                        }
+                    } else {
+                        String showText = "출고된 자재가 아닙니다.";
+                        tvStatus.setText(showText);
+                        Toast.makeText(Parts_Change.this, showText, Toast.LENGTH_SHORT).show();
+                        etAftPartCode.setText("");
+                        etAftPartNo.setText("");
+                        etAftLotNo.setText("");
+                        etAftQty.setText("");
+                    }
+                } else if (header.equals("RankCheck!")) {
+                    String showText = "자재 상태를 확인 할 수 없습니다.";
+                    tvStatus.setText(showText);
+                    Toast.makeText(Parts_Change.this, showText, Toast.LENGTH_SHORT).show();
+                    etAftPartCode.setText("");
+                    etAftPartNo.setText("");
+                    etAftLotNo.setText("");
+                    etAftQty.setText("");
                 } else if (header.equals("CheckVer")) {
                     JSONArray jsonArray = jsonObject.getJSONArray("CheckVer");
                     JSONObject item = jsonArray.getJSONObject(0);

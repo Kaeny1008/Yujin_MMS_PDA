@@ -82,7 +82,7 @@ public class All_Parts_Check extends AppCompatActivity {
     private ArrayList<String> makerList; // 스피너1의 네임 리스트
     private ArrayAdapter<String> makerListADT; // 스피너1에 사용되는 ArrayAdapter
 
-    private String orgPartNo, factoryName, lineName, workSide, modelName, customerName;
+    private String orgPartNo, factoryName, lineName, workSide, modelName, customerName, customerCode;
     private String checkCode;
     private String ngReasonString = "";
     private String ngCheckID = "";
@@ -373,12 +373,9 @@ public class All_Parts_Check extends AppCompatActivity {
                             tvStatus.setText("Feeder Serial No.를 스캔하여 주십시오.");
                         } else if (etMainDDCode.length() == 0) {
                             split_DD_Barcode(mDecodeResult.toString());
-                        } else if (etFeederSN.length() == 0 && noFeeder.isChecked() == false) {
+                        } else if (etFeederSN.length() == 0 && !noFeeder.isChecked()) {
                             if (mDecodeResult.toString().substring(0, 3).equals("FN-")) {
                                 etFeederSN.setText(mDecodeResult.toString().replace("FN-", ""));
-                                // FeederSN의 사용여부를 확인해야한다.
-                                // TB_DEVICE_DATA, FEEDER_SN을 검사
-                                // DD_MAIN_NO 중 중복이 있는지 검사하면 된다.!!
                                 GetData task = new GetData();
                                 task.execute("http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/MMPS_V2/AllPartsCheck/feederlist.php", "feederList"
                                         , etMainDDCode.getText().toString()
@@ -401,15 +398,14 @@ public class All_Parts_Check extends AppCompatActivity {
                                 etQty.setText(splitBarcode[3]);
                             }
 
-                            // 모든정보가 입력이 되었다면 결과를 확인 한다.
-                            if (etPartCode.length() != 0 &&
-                                    etPartNo.length() != 0 &&
-                                    etLotNo.length() != 0 &&
-                                    etQty.length() != 0 ||
-                                    noFeeder.isChecked()){
-
-                                actionWrite();
-                            }
+                            //현장 출고가 된 자재인지 검증한다. ######
+                            GetData task = new GetData();
+                            task.execute("http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/MMPS_V2/AllPartsCheck/parts_status_check.php"
+                                    , "RankCheck"
+                                    , customerCode
+                                    , etPartCode.getText().toString()
+                                    , etLotNo.getText().toString()
+                            );
                             // 이거 임시로 여기 옮겨둠..
                             // Barcode 분리작업 시작
                             /*
@@ -484,6 +480,10 @@ public class All_Parts_Check extends AppCompatActivity {
             } else if (secondString.equals("BarcodeSplit")) {
                 postParameters = "barcode=" + params[3];
                 postParameters += "&maker=" + params[2];
+            } else if (secondString.equals("RankCheck")) {
+                postParameters = "Customer_Code=" + params[2];
+                postParameters += "&Part_Code=" + params[3];
+                postParameters += "&Lot_No=" + params[4];
             } else if (secondString.equals("ver")) {
                 postParameters = "";
             }
@@ -572,6 +572,7 @@ public class All_Parts_Check extends AppCompatActivity {
                     workSide = item.getString("WORK_SIDE");
                     modelName = item.getString("MODEL_NAME");
                     customerName = item.getString("CUSTOMER_NAME");
+                    customerCode = item.getString("CUSTOMER_Code");
 
                     // 불러온 제조사를 변수에 저장
                     String listPartMaker = item.getString("MAIN_PART_MAKER");
@@ -719,6 +720,7 @@ public class All_Parts_Check extends AppCompatActivity {
                     workSide = item.getString("WORK_SIDE");
                     modelName = item.getString("MODEL_NAME");
                     customerName = item.getString("CUSTOMER_NAME");
+                    customerCode = item.getString("CUSTOMER_Code");
 
                     //수량 자동입력방지 설정
                     /*
@@ -872,7 +874,7 @@ public class All_Parts_Check extends AppCompatActivity {
                                 if (!nowORG.equals("")) {
                                     etQty.setText(nowORG);
                                 } else {
-                                    if (etQty.getText().toString().equals("")){
+                                    if (etQty.getText().toString().equals("")) {
                                         etQty.setText(nowPartNo);
                                     }
                                 }
@@ -890,7 +892,7 @@ public class All_Parts_Check extends AppCompatActivity {
                                 if (etPartCode.length() != 0 &&
                                         etLotNo.length() != 0 &&
                                         etQty.length() != 0 ||
-                                        noFeeder.isChecked()){
+                                        noFeeder.isChecked()) {
                                     // 결과를 확인할지 물어본다.
                                     //resultWriteQuestion();
 
@@ -903,6 +905,36 @@ public class All_Parts_Check extends AppCompatActivity {
                     } catch (Exception e) {
                         Log.d(TAG, "PHP에서 돌아온 바코드 정보를 확인 중 오류 발생", e);
                     }
+                } else if (header.equals("RankCheck")) {
+                    JSONArray jsonArray = jsonObject.getJSONArray("RankCheck");
+                    JSONObject item = jsonArray.getJSONObject(0);
+                    if (item.getString("Part_Status").equals("Run")) {
+                        // 모든정보가 입력이 되었다면 결과를 확인 한다.
+                        if (etPartCode.length() != 0 &&
+                                etPartNo.length() != 0 &&
+                                etLotNo.length() != 0 &&
+                                etQty.length() != 0 ||
+                                noFeeder.isChecked()){
+
+                            actionWrite();
+                        }
+                    } else {
+                        String showText = "출고된 자재가 아닙니다.";
+                        tvStatus.setText(showText);
+                        Toast.makeText(All_Parts_Check.this, showText, Toast.LENGTH_SHORT).show();
+                        etPartCode.setText("");
+                        etPartNo.setText("");
+                        etLotNo.setText("");
+                        etQty.setText("");
+                    }
+                } else if (header.equals("RankCheck!")) {
+                    String showText = "자재 상태를 확인 할 수 없습니다.";
+                    tvStatus.setText(showText);
+                    Toast.makeText(All_Parts_Check.this, showText, Toast.LENGTH_SHORT).show();
+                    etPartCode.setText("");
+                    etPartNo.setText("");
+                    etLotNo.setText("");
+                    etQty.setText("");
                 } else if (header.equals("CheckVer")) {
                     JSONArray jsonArray = jsonObject.getJSONArray("CheckVer");
                     JSONObject item = jsonArray.getJSONObject(0);
@@ -1015,7 +1047,7 @@ public class All_Parts_Check extends AppCompatActivity {
                 !etFeederNo.getText().toString().equals("") &&
                 !etPartCode.getText().toString().equals("")){
 
-            if (etFeederSN.getText().toString().equals("") && noFeeder.isChecked() == false){
+            if (etFeederSN.getText().toString().equals("") && !noFeeder.isChecked()){
                 Toast.makeText(All_Parts_Check.this, "Feeder SN을 입력하여 주십시오.", Toast.LENGTH_SHORT).show();
                 return;
             }
