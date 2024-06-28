@@ -354,6 +354,15 @@ public class Warehousing_Check extends AppCompatActivity {
                 , "Load_Supplier");
     }
 
+    private void loadSamePartsCheck(){
+        GetData getData = new GetData();
+        getData.execute("http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/MMNG/Warehouse_Check/load_same_parts_check.php"
+                , "Load_Same_Parts_check"
+                , spnDocumentNo.getSelectedItem().toString()
+                , etPartCode.getText().toString()
+                , etLotNo.getText().toString());
+    }
+
     private void controlReset(){
         etPartCode.setText("");
         etPartNo.setText("");
@@ -399,6 +408,8 @@ public class Warehousing_Check extends AppCompatActivity {
                             }
                             String barcode[] = mDecodeResult.toString().split("!");
                             if (barcode.length < 5){
+                                long[] pattern = {500,1000,500,1000};
+                                vibrator.vibrate(pattern, -1); // miliSecond, 지정한 시간동안 진동
                                 tvStatus.setText("바코드를 확인 할 수 없습니다.");
                                 Toast.makeText(Warehousing_Check.this, "바코드를 확인 할 수 없습니다.", Toast.LENGTH_SHORT).show();
                             } else {
@@ -407,7 +418,8 @@ public class Warehousing_Check extends AppCompatActivity {
                                 etLotNo.setText(barcode[2]);
                                 etQty.setText(barcode[3]);
                                 etVendor.setText(barcode[4]);
-                                loadInformation();
+                                //loadInformation();
+                                loadSamePartsCheck();
                             }
                         }
                     }
@@ -456,6 +468,10 @@ public class Warehousing_Check extends AppCompatActivity {
             } else if (secondString.equals("Make_New_In_No")) {
                 postParameters = "InDate=" + params[2];
                 postParameters += "&DocumentNo=" + params[3];
+            } else if (secondString.equals("Load_Same_Parts_check")) {
+                postParameters = "DocumentNo=" + params[2];
+                postParameters += "&PartCode=" + params[3];
+                postParameters += "&PartLotNo=" + params[4];
             } else if (secondString.equals("checkInsert")) {
                 postParameters = "sql=" + params[2];
             }
@@ -608,10 +624,22 @@ public class Warehousing_Check extends AppCompatActivity {
                         vibrator.vibrate(pattern, -1); // miliSecond, 지정한 시간동안 진동
                         return;
                     }
-                    vibrator.vibrate(100); // miliSecond, 지정한 시간동안 진동
+
                     controlReset();
                     tvStatus.setText("저장완료.\n다음 자재를 스캔하여 주십시오.");
                     Toast.makeText(Warehousing_Check.this, "저장완료.\n다음 자재를 스캔하여 주십시오.", Toast.LENGTH_SHORT).show();
+                } else if (header.equals("Load_Same_Parts_check")) {
+                    JSONArray jsonArray = jsonObject.getJSONArray("Load_Same_Parts_check");
+                    JSONObject item = jsonArray.getJSONObject(0);
+                    if (!item.getString("SamePart").equals("Exist")) {
+                        loadInformation();
+                    } else {
+                        long[] pattern = {500,1000,500,1000};
+                        vibrator.vibrate(pattern, -1); // miliSecond, 지정한 시간동안 진동
+                        tvStatus.setText("중복된 Lot No.입니다.");
+                        Toast.makeText(Warehousing_Check.this, "중복된 Lot No.입니다.", Toast.LENGTH_SHORT).show();
+                        controlReset();
+                    }
                 } else if (header.equals("CheckVer")) {
                     JSONArray jsonArray = jsonObject.getJSONArray("CheckVer");
                     JSONObject item = jsonArray.getJSONObject(0);
