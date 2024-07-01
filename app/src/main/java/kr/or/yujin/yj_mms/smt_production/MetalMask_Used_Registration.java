@@ -381,7 +381,7 @@ public class MetalMask_Used_Registration extends AppCompatActivity {
                             tv_TotalCount.setText(item.getString("Using_Count"));
                             orgTotalCount = Integer.parseInt(item.getString("Using_Count"));
 
-                            et_UsingCount.setText(getIntent().getStringExtra("Order_Count")); //이거 작동이 안됨.
+                            et_UsingCount.setText(getIntent().getStringExtra("Order_Count"));
 
                             String maskStatus = "사용횟수, 작업자, 검사결과를 입력한 후\n'사용종료 등록' 버튼을 눌러 저장하십시오.";
                             Toast.makeText(MetalMask_Used_Registration.this, maskStatus, Toast.LENGTH_SHORT).show();

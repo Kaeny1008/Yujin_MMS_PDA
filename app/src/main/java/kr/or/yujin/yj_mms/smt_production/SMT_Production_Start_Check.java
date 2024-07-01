@@ -50,6 +50,7 @@ public class SMT_Production_Start_Check extends AppCompatActivity {
     private Button btnBottomStart, btnTopStart, btnProductionEnd;
 
     private String nowDepartment, nowWorkLine, nowModelCode;
+    private Integer arrayCount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -148,6 +149,7 @@ public class SMT_Production_Start_Check extends AppCompatActivity {
         intent.putExtra("Model Code", nowModelCode);
         intent.putExtra("Order_Status", tv_OrderStatus.getText().toString());
         intent.putExtra("Item_TB", tv_TopBottom.getText().toString());
+        intent.putExtra("Array_Count", arrayCount);
         startActivityForResult(intent, 1);
     }
 
@@ -292,6 +294,7 @@ public class SMT_Production_Start_Check extends AppCompatActivity {
                     tv_OrderQty.setText(item.getString("Order_Qty"));
                     tv_OrderStatus.setText(item.getString("Order_Status"));
                     nowModelCode = item.getString("Model_Code");
+                    arrayCount = item.getInt("Array_Count");
 
                     if (tv_OrderStatus.getText().toString().equals("SMD 작업완료")){
                         finish();

@@ -54,6 +54,7 @@ public class SMT_Production_Working extends AppCompatActivity {
     private TextView tv_OrderIndex, tv_Customer, tv_ItemCode, tv_ItemName, tv_OrderQty, tv_WorkSide, tv_DeviceData, tv_Department, tv_WorkLine;
     private Button btnAllPartsCheck, btnPartsChange, btnWorkingStart, btnWorkingEnd;
     private CheckBox cb_AllPartsCheck;
+    private Integer arrayCount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +72,7 @@ public class SMT_Production_Working extends AppCompatActivity {
         tv_Department.setText(getIntent().getStringExtra("Department"));
         tv_WorkLine.setText(getIntent().getStringExtra("Work Line"));
         nowModelCode = getIntent().getStringExtra("Model Code");
+        arrayCount = getIntent().getIntExtra("Array_Count", 1);
 
         // Device Data DD Main No를 불러온다.
         GetData task = new GetData();
@@ -268,7 +270,8 @@ public class SMT_Production_Working extends AppCompatActivity {
                         intent.putExtra("Worker", et_Worker.getText().toString());
                         intent.putExtra("Department", tv_Department.getText().toString());
                         intent.putExtra("Work_Line", tv_WorkLine.getText().toString());
-                        intent.putExtra("Order_Count", tv_OrderQty.getText().toString());
+                        Integer maskUsingCount = Integer.parseInt(tv_OrderQty.getText().toString()) / arrayCount;
+                        intent.putExtra("Order_Count", Math.ceil(maskUsingCount));
                         startActivityForResult(intent, 3); //<- 3
                     }
                 });
