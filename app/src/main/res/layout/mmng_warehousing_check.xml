@@ -91,7 +91,7 @@
                     android:layout_weight="0"
                     android:background="@drawable/text_border_lightblue"
                     android:inputType="text"
-                    android:enabled="false"
+                    android:enabled="true"
                     android:textAlignment="center"
                     android:textColor="#000000"
                     android:textColorHint="#c9c9c9"

@@ -202,6 +202,16 @@ public class Stock_Survey extends AppCompatActivity {
         insertText += ", '" + getTime + "'";
         insertText += ";";
 
+        /*
+        // 자재창고를 현재 수량으로 업데이트 한다.
+        insertText += "update tb_mms_material_warehousing set available_qty = " + etQty.getText().toString();
+        insertText += " where customer_code = f_mms_stock_survey_customer_code('" + planContentNo + "')";
+        insertText += " and part_code = '" + etPartCode.getText().toString() + "'";
+        insertText += " and part_no = '" + etPartNo.getText().toString().replace("'", "\\'") + "'";
+        insertText += " and part_lot_no = '" + etLotNo.getText().toString().replace("'", "\\'") + "'";
+        insertText += ";";
+         */
+
         Log.d(TAG, "전송할 SQL : " + insertText);
 
         GetData taskSave = new GetData();
