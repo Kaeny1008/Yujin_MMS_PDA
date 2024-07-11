@@ -270,8 +270,9 @@ public class SMT_Production_Working extends AppCompatActivity {
                         intent.putExtra("Worker", et_Worker.getText().toString());
                         intent.putExtra("Department", tv_Department.getText().toString());
                         intent.putExtra("Work_Line", tv_WorkLine.getText().toString());
+                        Log.e(TAG, "마스크 작업수량 : " + Integer.parseInt(tv_OrderQty.getText().toString()) / arrayCount);
                         Integer maskUsingCount = Integer.parseInt(tv_OrderQty.getText().toString()) / arrayCount;
-                        intent.putExtra("Order_Count", Math.ceil(maskUsingCount));
+                        intent.putExtra("Order_Count", String.valueOf(maskUsingCount));
                         startActivityForResult(intent, 3); //<- 3
                     }
                 });
