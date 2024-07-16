@@ -101,6 +101,7 @@ public class SMT_Production_Working extends AppCompatActivity {
                 intent.putExtra("Order_Index", tv_OrderIndex.getText().toString());
                 intent.putExtra("Worker", et_Worker.getText().toString());
                 intent.putExtra("Work_Side", tv_WorkSide.getText().toString());
+                intent.putExtra("Previous_CheckResult", cb_AllPartsCheck.isChecked());
                 if (cb_AllPartsCheck.isChecked()){
                     //Check가 되어 있지 않으므로 뒤로가기키를 누를수 없도록 변경
                     intent.putExtra("First_Check", "False");
@@ -357,6 +358,11 @@ public class SMT_Production_Working extends AppCompatActivity {
                 case 1:
                     //정상 종료(체크) 되었을 경우.
                     enabled_All_Parts_Check();
+                    break;
+                case 2:
+                    btnWorkingStart.setEnabled(false);
+                    btnWorkingEnd.setEnabled(true);
+                    btnPartsChange.setEnabled(true);
                     break;
             }
         } else if (requestCode == 2) {

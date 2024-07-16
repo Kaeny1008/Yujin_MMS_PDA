@@ -70,6 +70,8 @@ public class MMPS_All_Parts_Check_List extends AppCompatActivity {
 
         control_Initialize();
 
+        Log.e(TAG, "All Parts Check 했다 안했다 : " + getIntent().getBooleanExtra("Previous_CheckResult", false));
+
         firstCheck = getIntent().getStringExtra("First_Check");
         tv_DeviceData.setText(getIntent().getStringExtra("DD Main No"));
         order_index = getIntent().getStringExtra("Order_Index");
@@ -83,20 +85,26 @@ public class MMPS_All_Parts_Check_List extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (allList_Check()) {
-                    vibrator.vibrate(pattern1, -1); // miliSecond, 지정한 시간동안 진동
+                    if (!getIntent().getBooleanExtra("Previous_CheckResult", false)) {
+                        vibrator.vibrate(pattern1, -1); // miliSecond, 지정한 시간동안 진동
 
-                    String colName = "smd_all_parts_check_bottom";
-                    if (getIntent().getStringExtra("Work_Side").equals("Top")) {
-                        colName = "smd_all_parts_check_top";
+                        String colName = "smd_all_parts_check_bottom";
+                        if (getIntent().getStringExtra("Work_Side").equals("Top")) {
+                            colName = "smd_all_parts_check_top";
+                        }
+
+                        String strSQL = "update tb_mms_order_register_list set " + colName + " = 'Yes'";
+                        strSQL += " where order_index = '" + order_index + "';";
+
+                        GetData taskSave = new GetData();
+                        taskSave.execute("http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/SMT_Production/Production_Start/check_insert.php"
+                                , "Check_Insert"
+                                , strSQL);
+                    } else {
+                        Intent resultIntent = new Intent();
+                        setResult(2, resultIntent);
+                        finish();
                     }
-
-                    String strSQL = "update tb_mms_order_register_list set " + colName + " = 'Yes'";
-                    strSQL += " where order_index = '" + order_index + "';";
-
-                    GetData taskSave = new GetData();
-                    taskSave.execute("http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/SMT_Production/Production_Start/check_insert.php"
-                            , "Check_Insert"
-                            , strSQL);
                 } else {
                     vibrator.vibrate(pattern2, -1); // miliSecond, 지정한 시간동안 진동
                     Toast.makeText(MMPS_All_Parts_Check_List.this
