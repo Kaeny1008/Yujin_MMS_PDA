@@ -366,11 +366,21 @@ public class Stock_Survey extends AppCompatActivity {
                                 etVendor.setText(barcode[4]);
                                 Log.d(TAG, "변환 : " + etPartNo.getText().toString().replace("'", ""));
 
+                                /*
                                 GetData getData = new GetData();
                                 getData.execute("http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/MMNG/Stock_Survey/load_stock_qty.php"
                                         , "load_stock_qty"
                                         , spnSurveyNo.getSelectedItem().toString()
                                         , etPartCode.getText().toString());
+                                 */
+
+                                GetData getData = new GetData();
+                                getData.execute("http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/MMNG/Stock_Survey/load_exist_part.php"
+                                        , "load_exist_part"
+                                        , spnSurveyNo.getSelectedItem().toString()
+                                        , etPartCode.getText().toString()
+                                        , etPartNo.getText().toString()
+                                        , etLotNo.getText().toString());
                             }
                         } else {
                             tvStatus.setText("재고조사번호를 선택하여 주십시오.");
@@ -415,6 +425,11 @@ public class Stock_Survey extends AppCompatActivity {
                 //postParameters = "ddMainNo=" + params[2];
                 //postParameters += "&machineNo=" + params[3];
                 postParameters = "";
+            } else if (secondString.equals("load_exist_part")) {
+                postParameters = "PlanNo=" + params[2];
+                postParameters += "&PartCode=" + params[3];
+                postParameters += "&PartNo=" + params[4];
+                postParameters += "&LotNo=" + params[5];
             } else if (secondString.equals("load_stock_qty")) {
                 postParameters = "PlanNo=" + params[2];
                 postParameters += "&PartCode=" + params[3];
@@ -503,6 +518,24 @@ public class Stock_Survey extends AppCompatActivity {
                         surveyNoList.add(item.getString("Plan_No"));
                     }
                     surveyNoListADT.notifyDataSetChanged();
+                } else if (header.equals("Exist_Part")){
+                    long[] pattern = {500,1000,500,1000};
+                    vibrator.vibrate(pattern, -1); // miliSecond, 지정한 시간동안 진동
+                    Toast.makeText(Stock_Survey.this, "이미 등록된 자재 입니다.", Toast.LENGTH_SHORT).show();
+                    tvStatus.setText("이미 등록된 자재 입니다.");
+                    etPartCode.setText("");
+                    etPartNo.setText("");
+                    etLotNo.setText("");
+                    etQty.setText("");
+                    etTotalQty.setText("");
+                    etVendor.setText("");
+                    etAccumulateQty.setText("");
+                } else if (header.equals("Exist_Part!")){
+                    GetData getData = new GetData();
+                    getData.execute("http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/MMNG/Stock_Survey/load_stock_qty.php"
+                            , "load_stock_qty"
+                            , spnSurveyNo.getSelectedItem().toString()
+                            , etPartCode.getText().toString());
                 } else if (header.equals("stock_Qty")){
                     JSONArray jsonArray = jsonObject.getJSONArray("stock_Qty");
                     JSONObject item = jsonArray.getJSONObject(0);

@@ -80,6 +80,8 @@ public class SMT_Production_Working extends AppCompatActivity {
                 , "Load_DD_Main_No"
                 , nowModelCode
                 , tv_WorkSide.getText().toString()
+                , tv_Department.getText().toString()
+                , tv_WorkLine.getText().toString()
         );
 
         GetData task2 = new GetData();
@@ -302,15 +304,23 @@ public class SMT_Production_Working extends AppCompatActivity {
 
         String strSQL;
         Boolean lastCompleted = true;
-        if (getIntent().getStringExtra("Item_TB").equals("Bottom / Top")){
-            if (tv_WorkSide.getText().toString().equals("Bottom")) {
+        if (getIntent().getStringExtra("Item_TB").equalsIgnoreCase("Bottom / Top")){
+            Log.e(TAG, "양면 작업 주문을 확인 했습니다.");
+            if (tv_WorkSide.getText().toString().equalsIgnoreCase("Bottom")) {
                 lastCompleted = false;
+                Log.e(TAG, "Bottom면 작업이라 Bottom면 작업완료로 서버에 저장합니다.");
+            } else {
+                Log.e(TAG, "Top면 작업이라 SMD 작업완료로 서버에 저장합니다.");
             }
+        } else {
+            Log.e(TAG, "단면(Top) 작업 주문을 확인 했습니다.");
         }
+
         String completedString = tv_WorkSide.getText().toString() + " Completed";
         if (lastCompleted) {
             completedString = "SMD Completed";
         }
+        Log.e(TAG, completedString + " <-- 로 서버에 전송합니다.");
         strSQL = "update tb_mms_production_plan set smd_" + tv_WorkSide.getText().toString().toLowerCase() + "_end = '" + nowTime + "'";
         strSQL += ", smd_status = '" + completedString + "'";
         strSQL += " where order_index = '" + tv_OrderIndex.getText().toString() + "';";
@@ -424,6 +434,8 @@ public class SMT_Production_Working extends AppCompatActivity {
             } else if (secondString.equals("Load_DD_Main_No")) {
                 postParameters = "Model_Code=" + params[2];
                 postParameters += "&Work_Side=" + params[3];
+                postParameters += "&Factory=" + params[4];
+                postParameters += "&Line=" + params[5];
             } else if (secondString.equals("Load_All_Parts_Check_Result")) {
                 postParameters = "Order_Index=" + params[2];
                 postParameters += "&DD_Main_No=" + params[3];

@@ -107,30 +107,36 @@ public class SMT_Production_Start_Check extends AppCompatActivity {
         switch(tv_OrderStatus.getText().toString()){
             case "작업대기":
                 btnProductionEnd.setEnabled(false);
-                if (tv_TopBottom.getText().toString().contains("Bottom")){
+                if (tv_TopBottom.getText().toString().toUpperCase().contains("BOTTOM")){
+                    Log.e(TAG, "주문은 : '작업대기' 상태이며 Bottom면 작업이 포함되어 있습니다.");
                     btnBottomStart.setEnabled(true);
                     btnTopStart.setEnabled(false);
                 } else {
+                    Log.e(TAG, "주문은 : '작업대기' 상태이며 Bottom면 작업이 포함되어 있지 않습니다.");
                     btnBottomStart.setEnabled(false);
                     btnTopStart.setEnabled(true);
                 }
                 break;
             case "Bottom 작업중":
                 // Bottom 작업현황으로 자동으로 이동
+                Log.e(TAG, "주문은 : 'Bottom 작업중' 상태이므로 자동으로 작업전환 됩니다.");
                 working_Change("Bottom");
                 break;
             case "Bottom 완료":
                 btnBottomStart.setEnabled(false);
-                if (tv_TopBottom.getText().toString().contains("Top")){
+                if (tv_TopBottom.getText().toString().toUpperCase().contains("TOP")){
+                    Log.e(TAG, "주문은 : 'Bottom 완료' 상태이며 Top면 작업이 포함되어 있습니다.");
                     btnTopStart.setEnabled(true);
                     btnProductionEnd.setEnabled(false);
                 } else {
+                    Log.e(TAG, "주문은 : 'Bottom 완료' 상태이며 Top면 작업이 포함되어 있지 않습니다.");
                     btnTopStart.setEnabled(false);
                     btnProductionEnd.setEnabled(true);
                 }
                 break;
             case "Top 작업중":
                 // Top 작업현황으로 자동으로 이동
+                Log.e(TAG, "주문은 : 'Top 작업중' 상태이므로 자동으로 작업전환 됩니다.");
                 working_Change("Top");
                 break;
         }
@@ -207,7 +213,7 @@ public class SMT_Production_Start_Check extends AppCompatActivity {
             } else if (secondString.equals("Load_Order_Information")) {
                 postParameters = "Order_Index=" + params[2];
             } else if (secondString.equals("Load_Work_Side_Information")) {
-                postParameters = "Model_Code=" + params[2];
+                postParameters = "Order_Index=" + params[2];
             }
 
             try {
@@ -304,7 +310,7 @@ public class SMT_Production_Start_Check extends AppCompatActivity {
                     GetData task = new GetData();
                     task.execute( "http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/SMT_Production/Production_Start/load_work_side_information.php"
                             , "Load_Work_Side_Information"
-                            , item.getString("Model_Code")
+                            , item.getString("Order_Index")
                     );
                 } else if (header.equals("Order_Information!")){
                     tv_OrderIndex.setText("");
@@ -317,13 +323,15 @@ public class SMT_Production_Start_Check extends AppCompatActivity {
                 } else if (header.equals("Work_Side_Information")){
                     JSONArray jsonArray = jsonObject.getJSONArray("Work_Side_Information");
                     JSONObject item = jsonArray.getJSONObject(0);
+                    /*
                     String workSide = "Bottom / Top";
                     if (item.getString("Bottom_Work").equals("") && !item.getString("Top_Work").equals("")){
                         workSide = "Top";
                     } else if (!item.getString("Bottom_Work").equals("") && item.getString("Top_Work").equals("")){
                         workSide = "Bottom";
                     }
-                    tv_TopBottom.setText(workSide);
+                     */
+                    tv_TopBottom.setText(item.getString("Work_Side"));
                     workSelect();
                 } else if (header.equals("Work_Side_Information!")){
                     tv_TopBottom.setText("");
