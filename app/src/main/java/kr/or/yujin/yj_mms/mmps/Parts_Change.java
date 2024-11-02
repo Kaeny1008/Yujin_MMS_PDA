@@ -464,7 +464,7 @@ public class Parts_Change extends AppCompatActivity {
         insertText += ", order_index = '" + order_index + "'";
         insertText += " where check_code = '" + checkCode + "';";
 
-        Log.d(TAG, "Parts Change Result : " + insertText);
+        Log.d(TAG, new Date() + " " + "Parts Change Result : " + insertText);
 
         //서버로 전송한다.
         getData taskSave = new getData();
@@ -497,7 +497,7 @@ public class Parts_Change extends AppCompatActivity {
                 try {
                     if (ScanConst.INTENT_USERMSG.equals(intent.getAction())) {
                         mScanner.aDecodeGetResult(mDecodeResult.recycle());
-                        Log.d(TAG, "Scan Result : " + mDecodeResult.toString());
+                        Log.d(TAG, new Date() + " " + "Scan Result : " + mDecodeResult.toString());
                         if (mDecodeResult.toString().equals("READ_FAIL")) {
                             return;
                         }
@@ -746,8 +746,8 @@ public class Parts_Change extends AppCompatActivity {
             } else if (secondString.equals("feederInfo")) {
                 postParameters = "ddMainNo=" + params[2];
                 postParameters += "&feederSN=" + params[3];
-                // Log.d(TAG, "ddMainNo = " + params[2]);
-                // Log.d(TAG, "Feeder SN = " + params[3]);
+                // Log.d(TAG, new Date() + " " + "ddMainNo = " + params[2]);
+                // Log.d(TAG, new Date() + " " + "Feeder SN = " + params[3]);
             } else if (secondString.equals("resultSave")) {
                 postParameters = "sql=" + params[2];
             } else if (secondString.equals("codeDelete")) {
@@ -779,7 +779,7 @@ public class Parts_Change extends AppCompatActivity {
                 outputStream.close();
 
                 int responseStatusCode = httpURLConnection.getResponseCode();
-                Log.d(TAG, "response code - " + responseStatusCode);
+                Log.d(TAG, new Date() + " " + "response code - " + responseStatusCode);
 
                 InputStream inputStream;
                 if (responseStatusCode == HttpURLConnection.HTTP_OK) {
@@ -799,7 +799,7 @@ public class Parts_Change extends AppCompatActivity {
                 bufferedReader.close();
                 return sb.toString().trim();
             } catch (Exception e) {
-                Log.d(TAG, "getData : Error ", e);
+                Log.d(TAG, new Date() + " " + "getData : Error ", e);
                 errorString = e.toString();
                 return null;
             }
@@ -813,10 +813,10 @@ public class Parts_Change extends AppCompatActivity {
                 progressDialog.dismiss();
 
             if (result == null){
-                Log.d(TAG, "서버 접속 Error - " + errorString);
+                Log.d(TAG, new Date() + " " + "서버 접속 Error - " + errorString);
                 Toast.makeText(Parts_Change.this, "서버에 접속 할 수 없습니다.\n상세 내용은 로그를 참조 하십시오.", Toast.LENGTH_SHORT).show();
             } else {
-                Log.d(TAG, "서버 응답 내용 - " + result);
+                Log.d(TAG, new Date() + " " + "서버 응답 내용 - " + result);
                 showResult(result);
             }
         }
@@ -858,7 +858,7 @@ public class Parts_Change extends AppCompatActivity {
                         Toast.makeText(Parts_Change.this, mJsonString, Toast.LENGTH_SHORT).show();
                     }
                 } else if (header.equals("codeDelete")) {
-                    Log.d(TAG, "Check Code 삭제 완료");
+                    Log.d(TAG, new Date() + " " + "Check Code 삭제 완료");
                 } else if (header.equals("feederInfo!")) {
                     Toast.makeText(Parts_Change.this, "Feeder Setial No.를 확인하여 주십시오.", Toast.LENGTH_SHORT).show();
                 } else if (header.equals("feederInfo")) {
@@ -946,7 +946,7 @@ public class Parts_Change extends AppCompatActivity {
                         //long[] pattern = {500,100,500,100,500};
                         //vibrator.vibrate(pattern, -1); // miliSecond, 지정한 시간동안 진동
                     }
-                    Log.d(TAG, "Original Part No : " + orgPartNo);
+                    Log.d(TAG, new Date() + " " + "Original Part No : " + orgPartNo);
                 } else if (header.equals("saveResult")) {
                     JSONArray jsonArray = jsonObject.getJSONArray("saveResult");
                     JSONObject item = jsonArray.getJSONObject(0);
@@ -1109,7 +1109,7 @@ public class Parts_Change extends AppCompatActivity {
                             }
                         }
                     } catch (Exception e) {
-                        Log.d(TAG, "PHP에서 돌아온 바코드 정보를 확인 중 오류 발생", e);
+                        Log.d(TAG, new Date() + " " + "PHP에서 돌아온 바코드 정보를 확인 중 오류 발생", e);
                     }
                 } else if (header.equals("RankCheck")) {
                     JSONArray jsonArray = jsonObject.getJSONArray("RankCheck");
@@ -1152,7 +1152,7 @@ public class Parts_Change extends AppCompatActivity {
                     Toast.makeText(Parts_Change.this, mJsonString, Toast.LENGTH_SHORT).show();
                 }
             } catch (JSONException e) {
-                Log.d(TAG, "showResult Error : ", e);
+                Log.d(TAG, new Date() + " " + "showResult Error : ", e);
             }
         }
     }

@@ -35,6 +35,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Date;
 import java.util.List;
 
 import kr.or.yujin.yj_mms.BuildConfig;
@@ -59,9 +60,9 @@ public class SMT_Production_Start_Check extends AppCompatActivity {
 
         control_Initialize();
 
-        Log.e(TAG, "현재 선택된 주문번호는 : " + getIntent().getStringExtra("Order Index"));
-        Log.e(TAG, "현재 선택된 동은 : " + getIntent().getStringExtra("Department"));
-        Log.e(TAG, "현재 선택된 라인은 : " + getIntent().getStringExtra("Work Line"));
+        Log.e(TAG, new Date() + " " +"현재 선택된 주문번호는 : " + getIntent().getStringExtra("Order Index"));
+        Log.e(TAG, new Date() + " " +"현재 선택된 동은 : " + getIntent().getStringExtra("Department"));
+        Log.e(TAG, new Date() + " " +"현재 선택된 라인은 : " + getIntent().getStringExtra("Work Line"));
         nowDepartment = getIntent().getStringExtra("Department");
         nowWorkLine = getIntent().getStringExtra("Work Line");
         GetData task = new GetData();
@@ -108,35 +109,35 @@ public class SMT_Production_Start_Check extends AppCompatActivity {
             case "작업대기":
                 btnProductionEnd.setEnabled(false);
                 if (tv_TopBottom.getText().toString().toUpperCase().contains("BOTTOM")){
-                    Log.e(TAG, "주문은 : '작업대기' 상태이며 Bottom면 작업이 포함되어 있습니다.");
+                    Log.e(TAG, new Date() + " " +"주문은 : '작업대기' 상태이며 Bottom면 작업이 포함되어 있습니다.");
                     btnBottomStart.setEnabled(true);
                     btnTopStart.setEnabled(false);
                 } else {
-                    Log.e(TAG, "주문은 : '작업대기' 상태이며 Bottom면 작업이 포함되어 있지 않습니다.");
+                    Log.e(TAG, new Date() + " " +"주문은 : '작업대기' 상태이며 Bottom면 작업이 포함되어 있지 않습니다.");
                     btnBottomStart.setEnabled(false);
                     btnTopStart.setEnabled(true);
                 }
                 break;
             case "Bottom 작업중":
                 // Bottom 작업현황으로 자동으로 이동
-                Log.e(TAG, "주문은 : 'Bottom 작업중' 상태이므로 자동으로 작업전환 됩니다.");
+                Log.e(TAG, new Date() + " " +"주문은 : 'Bottom 작업중' 상태이므로 자동으로 작업전환 됩니다.");
                 working_Change("Bottom");
                 break;
             case "Bottom 완료":
                 btnBottomStart.setEnabled(false);
                 if (tv_TopBottom.getText().toString().toUpperCase().contains("TOP")){
-                    Log.e(TAG, "주문은 : 'Bottom 완료' 상태이며 Top면 작업이 포함되어 있습니다.");
+                    Log.e(TAG, new Date() + " " +"주문은 : 'Bottom 완료' 상태이며 Top면 작업이 포함되어 있습니다.");
                     btnTopStart.setEnabled(true);
                     btnProductionEnd.setEnabled(false);
                 } else {
-                    Log.e(TAG, "주문은 : 'Bottom 완료' 상태이며 Top면 작업이 포함되어 있지 않습니다.");
+                    Log.e(TAG, new Date() + " " +"주문은 : 'Bottom 완료' 상태이며 Top면 작업이 포함되어 있지 않습니다.");
                     btnTopStart.setEnabled(false);
                     btnProductionEnd.setEnabled(true);
                 }
                 break;
             case "Top 작업중":
                 // Top 작업현황으로 자동으로 이동
-                Log.e(TAG, "주문은 : 'Top 작업중' 상태이므로 자동으로 작업전환 됩니다.");
+                Log.e(TAG, new Date() + " " +"주문은 : 'Top 작업중' 상태이므로 자동으로 작업전환 됩니다.");
                 working_Change("Top");
                 break;
         }
@@ -163,7 +164,7 @@ public class SMT_Production_Start_Check extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-        Log.e(TAG, "RequestCode : " + requestCode + ", ResultCode : " + resultCode);
+        Log.e(TAG, new Date() + " " +"RequestCode : " + requestCode + ", ResultCode : " + resultCode);
         if (requestCode == 1) {
             // SMT Production Working에서 온 Data
             switch (resultCode) {
@@ -232,7 +233,7 @@ public class SMT_Production_Start_Check extends AppCompatActivity {
                 outputStream.close();
 
                 int responseStatusCode = httpURLConnection.getResponseCode();
-                Log.d(TAG, "response code - " + responseStatusCode);
+                Log.d(TAG, new Date() + " " +"response code - " + responseStatusCode);
 
                 InputStream inputStream;
                 if (responseStatusCode == HttpURLConnection.HTTP_OK) {
@@ -252,7 +253,7 @@ public class SMT_Production_Start_Check extends AppCompatActivity {
                 bufferedReader.close();
                 return sb.toString().trim();
             } catch (Exception e) {
-                //Log.d(TAG, "GetData : Error ", e);
+                //Log.d(TAG, new Date() + " " +"GetData : Error ", e);
                 errorString = e.toString();
                 return null;
             }
@@ -266,10 +267,10 @@ public class SMT_Production_Start_Check extends AppCompatActivity {
                 progressDialog.dismiss();
 
             if (result == null){
-                Log.d(TAG, "서버 접속 Error - " + errorString);
+                Log.d(TAG, new Date() + " " +"서버 접속 Error - " + errorString);
                 Toast.makeText(SMT_Production_Start_Check.this, "서버에 접속 할 수 없습니다.\n상세 내용은 로그를 참조 하십시오.", Toast.LENGTH_SHORT).show();
             } else {
-                Log.d(TAG, "서버 응답 내용 - " + result);
+                Log.d(TAG, new Date() + " " +"서버 응답 내용 - " + result);
                 showResult(result);
             }
         }
@@ -340,7 +341,7 @@ public class SMT_Production_Start_Check extends AppCompatActivity {
                     Toast.makeText(SMT_Production_Start_Check.this, mJsonString, Toast.LENGTH_SHORT).show();
                 }
             } catch (JSONException e) {
-                Log.d(TAG, "showResult Error : ", e);
+                Log.d(TAG, new Date() + " " +"showResult Error : ", e);
             }
         }
     }

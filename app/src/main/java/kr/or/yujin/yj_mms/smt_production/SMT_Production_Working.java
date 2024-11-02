@@ -245,7 +245,7 @@ public class SMT_Production_Working extends AppCompatActivity {
         strSQL += "update tb_mms_production_plan set smd_" + tv_WorkSide.getText().toString().toLowerCase() + "_start = '" + nowTime + "'";
         strSQL += ", smd_status = '" + tv_WorkSide.getText().toString() + " Run'";
         strSQL += " where order_index = '" + tv_OrderIndex.getText().toString() + "';";
-        Log.e(TAG, "작업시작 전송 SQL : " + strSQL);
+        Log.e(TAG, new Date() + " " +"작업시작 전송 SQL : " + strSQL);
         GetData task = new GetData();
         task.execute( "http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/SMT_Production/Production_Start/save_work_start.php"
                 , "Save_Work_Start"
@@ -273,7 +273,7 @@ public class SMT_Production_Working extends AppCompatActivity {
                         intent.putExtra("Worker", et_Worker.getText().toString());
                         intent.putExtra("Department", tv_Department.getText().toString());
                         intent.putExtra("Work_Line", tv_WorkLine.getText().toString());
-                        Log.e(TAG, "마스크 작업수량 : " + Integer.parseInt(tv_OrderQty.getText().toString()) / arrayCount);
+                        Log.e(TAG, new Date() + " " +"마스크 작업수량 : " + Integer.parseInt(tv_OrderQty.getText().toString()) / arrayCount);
                         Integer maskUsingCount = Integer.parseInt(tv_OrderQty.getText().toString()) / arrayCount;
                         intent.putExtra("Order_Count", String.valueOf(maskUsingCount));
                         startActivityForResult(intent, 3); //<- 3
@@ -305,26 +305,26 @@ public class SMT_Production_Working extends AppCompatActivity {
         String strSQL;
         Boolean lastCompleted = true;
         if (getIntent().getStringExtra("Item_TB").equalsIgnoreCase("Bottom / Top")){
-            Log.e(TAG, "양면 작업 주문을 확인 했습니다.");
+            Log.e(TAG, new Date() + " " +"양면 작업 주문을 확인 했습니다.");
             if (tv_WorkSide.getText().toString().equalsIgnoreCase("Bottom")) {
                 lastCompleted = false;
-                Log.e(TAG, "Bottom면 작업이라 Bottom면 작업완료로 서버에 저장합니다.");
+                Log.e(TAG, new Date() + " " +"Bottom면 작업이라 Bottom면 작업완료로 서버에 저장합니다.");
             } else {
-                Log.e(TAG, "Top면 작업이라 SMD 작업완료로 서버에 저장합니다.");
+                Log.e(TAG, new Date() + " " +"Top면 작업이라 SMD 작업완료로 서버에 저장합니다.");
             }
         } else {
-            Log.e(TAG, "단면(Top) 작업 주문을 확인 했습니다.");
+            Log.e(TAG, new Date() + " " +"단면(Top) 작업 주문을 확인 했습니다.");
         }
 
         String completedString = tv_WorkSide.getText().toString() + " Completed";
         if (lastCompleted) {
             completedString = "SMD Completed";
         }
-        Log.e(TAG, completedString + " <-- 로 서버에 전송합니다.");
+        Log.e(TAG, new Date() + " " +completedString + " <-- 로 서버에 전송합니다.");
         strSQL = "update tb_mms_production_plan set smd_" + tv_WorkSide.getText().toString().toLowerCase() + "_end = '" + nowTime + "'";
         strSQL += ", smd_status = '" + completedString + "'";
         strSQL += " where order_index = '" + tv_OrderIndex.getText().toString() + "';";
-        Log.e(TAG, "작업종료 전송 SQL : " + strSQL);
+        Log.e(TAG, new Date() + " " +"작업종료 전송 SQL : " + strSQL);
         GetData task = new GetData();
         task.execute( "http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/SMT_Production/Production_Start/save_work_end.php"
                 , "Save_Work_End"
@@ -361,7 +361,7 @@ public class SMT_Production_Working extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-        Log.e(TAG, "RequestCode : " + requestCode + ", ResultCode : " + resultCode);
+        Log.e(TAG, new Date() + " " +"RequestCode : " + requestCode + ", ResultCode : " + resultCode);
         if (requestCode == 1) {
             // MMPS All Parts Check List에서 온 Data
             switch (resultCode) {
@@ -464,7 +464,7 @@ public class SMT_Production_Working extends AppCompatActivity {
                 outputStream.close();
 
                 int responseStatusCode = httpURLConnection.getResponseCode();
-                Log.d(TAG, "response code - " + responseStatusCode);
+                Log.d(TAG, new Date() + " " +"response code - " + responseStatusCode);
 
                 InputStream inputStream;
                 if (responseStatusCode == HttpURLConnection.HTTP_OK) {
@@ -484,7 +484,7 @@ public class SMT_Production_Working extends AppCompatActivity {
                 bufferedReader.close();
                 return sb.toString().trim();
             } catch (Exception e) {
-                //Log.d(TAG, "GetData : Error ", e);
+                //Log.d(TAG, new Date() + " " +"GetData : Error ", e);
                 errorString = e.toString();
                 return null;
             }
@@ -498,10 +498,10 @@ public class SMT_Production_Working extends AppCompatActivity {
                 progressDialog.dismiss();
 
             if (result == null){
-                Log.d(TAG, "서버 접속 Error - " + errorString);
+                Log.d(TAG, new Date() + " " +"서버 접속 Error - " + errorString);
                 Toast.makeText(SMT_Production_Working.this, "서버에 접속 할 수 없습니다.\n상세 내용은 로그를 참조 하십시오.", Toast.LENGTH_SHORT).show();
             } else {
-                Log.d(TAG, "서버 응답 내용 - " + result);
+                Log.d(TAG, new Date() + " " +"서버 응답 내용 - " + result);
                 showResult(result);
             }
         }
@@ -582,7 +582,7 @@ public class SMT_Production_Working extends AppCompatActivity {
                     Toast.makeText(SMT_Production_Working.this, mJsonString, Toast.LENGTH_SHORT).show();
                 }
             } catch (JSONException e) {
-                Log.d(TAG, "showResult Error : ", e);
+                Log.d(TAG, new Date() + " " +"showResult Error : ", e);
             }
         }
     }
