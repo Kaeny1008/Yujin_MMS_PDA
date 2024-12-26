@@ -134,6 +134,12 @@ public class MetalMask_Use_Registration extends AppCompatActivity {
                             , Toast.LENGTH_SHORT).show();
                     return;
                 }
+                if (etMaskSN.getText().toString().equals("")) {
+                    Toast.makeText(MetalMask_Use_Registration.this
+                            , "사용할 수 있는 Metal Mask가 존재 하지 않습니다."
+                            , Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 String strSQL = "";
                 long now = System.currentTimeMillis();
                 Date date = new Date(now);
@@ -219,13 +225,15 @@ public class MetalMask_Use_Registration extends AppCompatActivity {
                         if (mDecodeResult.toString().equals("READ_FAIL")) {
                             return;
                         }
-                        etMaskSN.setText(mDecodeResult.toString());
-                        // 메탈마스크 상태(폐기)를 확인 한후 사용가능 상태이면 마스크 정보를 불러온다.
-                        GetData taskMaskUsable = new GetData();
-                        taskMaskUsable.execute("http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/SMT_Production/Production_Start/load_mask_info.php"
-                                , "Load_Mask_Info"
-                                , etMaskSN.getText().toString()
-                        );
+                        if (!tv_LoadMaskSN.getText().toString().equals("")){
+                            etMaskSN.setText(mDecodeResult.toString());
+                            // 메탈마스크 상태(폐기)를 확인 한후 사용가능 상태이면 마스크 정보를 불러온다.
+                            GetData taskMaskUsable = new GetData();
+                            taskMaskUsable.execute("http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/SMT_Production/Production_Start/load_mask_info.php"
+                                    , "Load_Mask_Info"
+                                    , etMaskSN.getText().toString()
+                            );
+                        }
                     }
                 }catch (Exception e){
                     e.printStackTrace();
@@ -348,6 +356,10 @@ public class MetalMask_Use_Registration extends AppCompatActivity {
                     tv_StorageNo.setText(item.getString("Storage_No"));
                 } else if (header.equals("Load_Mask_Serial!")) {
                     Toast.makeText(MetalMask_Use_Registration.this, "사용할 수 있는 메탈마스크가 존재하지 않습니다.", Toast.LENGTH_SHORT).show();
+                    // Intent resultIntent = new Intent();
+                    // setResult(2, resultIntent);
+                    // finish();
+                    // onPause();
                 } else if (header.equals("Load_Mask_Info")) {
                     JSONArray jsonArray = jsonObject.getJSONArray("Load_Mask_Info");
                     JSONObject item = jsonArray.getJSONObject(0);

@@ -89,6 +89,7 @@ public class Stock_Survey extends AppCompatActivity {
     private int firstRun_spnSurveyNo = 0;
 
     private String planContentNo = "";
+    private String nowMWNo = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -181,6 +182,10 @@ public class Stock_Survey extends AppCompatActivity {
             Toast.makeText(Stock_Survey.this, "필수 입력항목을 모두 입력하여 주십시오.", Toast.LENGTH_SHORT).show();
             return;
         }
+        if (nowMWNo.toString().equals("")){
+            Toast.makeText(Stock_Survey.this, "검증되지 않은 자재 입니다.(MW No)", Toast.LENGTH_SHORT).show();
+            return;
+        }
         String insertText = "";
         long now = System.currentTimeMillis();
         Date date = new Date(now);
@@ -189,7 +194,7 @@ public class Stock_Survey extends AppCompatActivity {
 
         insertText = "insert into tb_mms_material_stock_survey_action_content(";
         insertText += "action_content_no, plan_content_no, part_code";
-        insertText += ", vendor, part_no, lot_no, stock_qty, checker, check_date";
+        insertText += ", vendor, part_no, lot_no, stock_qty, checker, check_date, mw_no";
         insertText += ") ";
         insertText += "select f_mms_stock_survey_action_no(date_format(now(), '%Y-%m-%d'))";
         insertText += ", '" + planContentNo + "'";
@@ -200,6 +205,7 @@ public class Stock_Survey extends AppCompatActivity {
         insertText += ", '" + etQty.getText().toString() + "'";
         insertText += ", '" + etWorker.getText().toString() + "'";
         insertText += ", '" + getTime + "'";
+        insertText += ", '" + nowMWNo + "'";
         insertText += ";";
 
         /*
@@ -433,6 +439,8 @@ public class Stock_Survey extends AppCompatActivity {
             } else if (secondString.equals("load_stock_qty")) {
                 postParameters = "PlanNo=" + params[2];
                 postParameters += "&PartCode=" + params[3];
+                postParameters += "&PartNo=" + params[4];
+                postParameters += "&LotNo=" + params[5];
             } else if (secondString.equals("ver")) {
                 postParameters = "";
             } else if (secondString.equals("checkInsert")) {
@@ -535,13 +543,16 @@ public class Stock_Survey extends AppCompatActivity {
                     getData.execute("http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/MMNG/Stock_Survey/load_stock_qty.php"
                             , "load_stock_qty"
                             , spnSurveyNo.getSelectedItem().toString()
-                            , etPartCode.getText().toString());
+                            , etPartCode.getText().toString()
+                            , etPartNo.getText().toString()
+                            , etLotNo.getText().toString());
                 } else if (header.equals("stock_Qty")){
                     JSONArray jsonArray = jsonObject.getJSONArray("stock_Qty");
                     JSONObject item = jsonArray.getJSONObject(0);
                     etTotalQty.setText(item.getString("Stock_Qty"));
                     planContentNo = item.getString("Plan_Content_No");
                     etAccumulateQty.setText(item.getString("Accumulated_Qty"));
+                    nowMWNo = item.getString("MW_No");
                     if (checkBox.isChecked()){
                         checkInsert();
                     }
@@ -573,6 +584,7 @@ public class Stock_Survey extends AppCompatActivity {
                     etQty.setText("");
                     etTotalQty.setText("");
                     etAccumulateQty.setText("");
+                    nowMWNo = "";
                     tvStatus.setText("저장완료.\n다음 자재를 스캔하여 주십시오.");
                     Toast.makeText(Stock_Survey.this, "저장완료.\n다음 자재를 스캔하여 주십시오.", Toast.LENGTH_SHORT).show();
                 } else if (header.equals("CheckVer")) {

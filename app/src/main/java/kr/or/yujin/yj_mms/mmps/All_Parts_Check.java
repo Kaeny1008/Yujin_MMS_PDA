@@ -232,7 +232,8 @@ public class All_Parts_Check extends AppCompatActivity {
                 barcodeHistory = "";
                 // 현재 피더의 정보를 다시 불러온다.
                 GetData task = new GetData();
-                task.execute("http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/MMPS_V2/AllPartsCheck/nowfeeder.php", "nextFeeder"
+                task.execute("http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/MMPS_V2/AllPartsCheck/nowfeeder.php"
+                        , "nextFeeder"
                         , etMainDDCode.getText().toString()
                         , etMachineNo.getText().toString()
                         , etFeederNo.getText().toString());

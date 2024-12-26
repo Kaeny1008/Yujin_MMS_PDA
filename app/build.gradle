@@ -6,8 +6,8 @@ android {
         applicationId "kr.or.yujin.yj_mms"
         minSdkVersion 19
         targetSdkVersion 28
-        versionCode 100
-        versionName "1.0.0"
+        versionCode 102
+        versionName "1.0.2"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
