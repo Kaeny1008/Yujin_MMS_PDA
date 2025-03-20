@@ -244,8 +244,30 @@ public class SMT_Production_Working extends AppCompatActivity {
         //생산계획 SMD시작일 등록
         strSQL += "update tb_mms_production_plan set smd_" + tv_WorkSide.getText().toString().toLowerCase() + "_start = '" + nowTime + "'";
         strSQL += ", smd_status = '" + tv_WorkSide.getText().toString() + " Run'";
-        strSQL += " where order_index = '" + tv_OrderIndex.getText().toString() + "';";
-        Log.e(TAG, new Date() + " " +"작업시작 전송 SQL : " + strSQL);
+        strSQL += " where order_index = '" + tv_OrderIndex.getText().toString() + "'";
+        strSQL += ";";
+
+        //자재 사용이력 등록(작업면 마다)
+        Integer firstProcess = 0;
+        if (getIntent().getStringExtra("Item_TB").equalsIgnoreCase("Bottom / Top")){
+            Log.e(TAG, new Date() + " " + "양면 작업 주문을 확인 했습니다.");
+            if (tv_WorkSide.getText().toString().equalsIgnoreCase("Bottom")) {
+                firstProcess = 1;
+                Log.e(TAG, new Date() + " " + "Bottom면 작업이라 PCB 포함으로 자재 사용이력을 업데이트 합니다.");
+            } else {
+                Log.e(TAG, new Date() + " " + "Top면 작업이라 PCB 미포함으로 자재 사용이력을 업데이트 합니다.");
+            }
+        } else {
+            Log.e(TAG, new Date() + " " + "단면(Top) 작업 주문을 확인 했습니다.\nPCB 포함으로 자재 사용이력을 업데이트 합니다.");
+            firstProcess = 1;
+        }
+        strSQL += "call sp_mms_material_start_update('" + tv_OrderIndex.getText().toString() + "'";
+        strSQL += ", 'SMD'";
+        strSQL += ", '" + tv_WorkSide.getText().toString() + "'";
+        strSQL += ", " + firstProcess;
+        strSQL += ");";
+
+        //Log.e(TAG, new Date() + " " +"작업시작 전송 SQL : " + strSQL);
         GetData task = new GetData();
         task.execute( "http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/SMT_Production/Production_Start/save_work_start.php"
                 , "Save_Work_Start"
@@ -304,16 +326,19 @@ public class SMT_Production_Working extends AppCompatActivity {
 
         String strSQL;
         Boolean lastCompleted = true;
+        Integer firstProcess = 0;
         if (getIntent().getStringExtra("Item_TB").equalsIgnoreCase("Bottom / Top")){
-            Log.e(TAG, new Date() + " " +"양면 작업 주문을 확인 했습니다.");
+            Log.e(TAG, new Date() + " " + "양면 작업 주문을 확인 했습니다.");
             if (tv_WorkSide.getText().toString().equalsIgnoreCase("Bottom")) {
                 lastCompleted = false;
-                Log.e(TAG, new Date() + " " +"Bottom면 작업이라 Bottom면 작업완료로 서버에 저장합니다.");
+                firstProcess = 1;
+                Log.e(TAG, new Date() + " " + "Bottom면 작업이라 Bottom면 작업완료로 서버에 저장합니다.");
             } else {
-                Log.e(TAG, new Date() + " " +"Top면 작업이라 SMD 작업완료로 서버에 저장합니다.");
+                Log.e(TAG, new Date() + " " + "Top면 작업이라 SMD 작업완료로 서버에 저장합니다.");
             }
         } else {
-            Log.e(TAG, new Date() + " " +"단면(Top) 작업 주문을 확인 했습니다.");
+            Log.e(TAG, new Date() + " " + "단면(Top) 작업 주문을 확인 했습니다.");
+            firstProcess = 1;
         }
 
         String completedString = tv_WorkSide.getText().toString() + " Completed";
@@ -324,7 +349,15 @@ public class SMT_Production_Working extends AppCompatActivity {
         strSQL = "update tb_mms_production_plan set smd_" + tv_WorkSide.getText().toString().toLowerCase() + "_end = '" + nowTime + "'";
         strSQL += ", smd_status = '" + completedString + "'";
         strSQL += " where order_index = '" + tv_OrderIndex.getText().toString() + "';";
-        Log.e(TAG, new Date() + " " +"작업종료 전송 SQL : " + strSQL);
+        //Log.e(TAG, new Date() + " " +"작업종료 전송 SQL : " + strSQL);
+
+        //자재사용이력을 업데이트
+        strSQL += "call sp_mms_material_complete_update('" + tv_OrderIndex.getText().toString() + "'";
+        strSQL += ", 'SMD'";
+        strSQL += ", '" + tv_WorkSide.getText().toString() + "'";
+        strSQL += ", " + firstProcess;
+        strSQL += ");";
+
         GetData task = new GetData();
         task.execute( "http://" + MainActivity.server_ip + ":" + MainActivity.server_port + "/SMT_Production/Production_Start/save_work_end.php"
                 , "Save_Work_End"
