@@ -570,6 +570,7 @@ public class Parts_Change extends AppCompatActivity {
                                     , customerCode
                                     , etAftPartCode.getText().toString()
                                     , etAftLotNo.getText().toString()
+                                    , etAftPartNo.getText().toString()
                             );
                         } else {
                             // 프로세스 변경으로 현재 사용하지 않음.
@@ -759,6 +760,7 @@ public class Parts_Change extends AppCompatActivity {
                 postParameters = "Customer_Code=" + params[2];
                 postParameters += "&Part_Code=" + params[3];
                 postParameters += "&Lot_No=" + params[4];
+                postParameters += "&Part_No=" + params[5];
             } else if (secondString.equals("ver")) {
                 postParameters = "";
             }

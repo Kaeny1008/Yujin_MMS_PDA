@@ -406,6 +406,7 @@ public class All_Parts_Check extends AppCompatActivity {
                                     , customerCode
                                     , etPartCode.getText().toString()
                                     , etLotNo.getText().toString()
+                                    , etPartCode.getText().toString()
                             );
                             // 이거 임시로 여기 옮겨둠..
                             // Barcode 분리작업 시작
@@ -485,6 +486,7 @@ public class All_Parts_Check extends AppCompatActivity {
                 postParameters = "Customer_Code=" + params[2];
                 postParameters += "&Part_Code=" + params[3];
                 postParameters += "&Lot_No=" + params[4];
+                postParameters += "&Part_No=" + params[5];
             } else if (secondString.equals("ver")) {
                 postParameters = "";
             }
